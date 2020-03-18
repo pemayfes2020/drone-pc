@@ -10,6 +10,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 project(DRONE_PC LANGUAGES C CXX)
 
+set(EXTERNAL_DIR ${CMAKE_CURRENT_SOURCE_DIR}/external)
+
 # find packages
 set(Boost_USE_STATIC_LIBS        ON)
 set(Boost_USE_MULTITHREADED      ON)
@@ -20,27 +22,45 @@ find_package(Boost 1.65.1 REQUIRED
 find_package(freenect2 REQUIRED)
 find_package(OpenCV REQUIRED)
 
-include_directories(
+set(EXEC_INCLUE_DIRS
     ${freenect2_INCLUDE_DIRS}
     ${OpenCV_INCLUDE_DIRS}
     ${Boost_INCLUDE_DIRS}
-    kinect esp32 control
+    kinect esp32 control drone common
+    ${EXTERNAL_DIR}/cvdrone/src/
     )
 
-set(COMMON_LINK_LIBRARIES
-        ${freenect2_LIBRARIES}
+set(EXEC_LINK_LIBRARIES
+    ${freenect2_LIBRARIES}
+    ${OpenCV_LIBRARIES}
+    ${Boost_LIBRARY_DIRS}
+    ${Boost_FILESYSTEM_LIBRARY}
+    ${Boost_SYSTEM_LIBRARY})
+
+# make static library from cvdrone sources
+file(GLOB CVDRONE_SOURCES ${EXTERNAL_DIR}/cvdrone/src/ardrone/*.cpp)
+add_library(cvdrone STATIC ${CVDRONE_SOURCES})
+target_link_libraries(cvdrone
+        m
+        pthread
+        avutil
+        avformat
+        avcodec
+        swscale
         ${OpenCV_LIBRARIES}
-        ${Boost_LIBRARY_DIRS}
-        ${Boost_FILESYSTEM_LIBRARY}
-        ${Boost_SYSTEM_LIBRARY})
+    )
 
 # set main executable
 file(GLOB MAIN_SOURCES main.cpp)
-file(GLOB MODULE_SOURCES kinect/*.cpp esp32/*.cpp control/*.cpp)
+file(GLOB MODULE_SOURCES kinect/*.cpp esp32/*.cpp control/*.cpp drone/*.cpp common/*.cpp)
 
 add_executable(main ${MAIN_SOURCES} ${MODULE_SOURCES})
 
-target_link_libraries(main PRIVATE ${COMMON_LINK_LIBRARIES})
+target_include_directories(main PRIVATE ${EXEC_INCLUE_DIRS})
+target_link_libraries(main 
+    ${EXEC_LINK_LIBRARIES}
+    cvdrone
+    )
 
 # set test executables
 file(GLOB TEST_SOURCES testsuite/*.cpp)
@@ -50,5 +70,7 @@ foreach(TEST_SOURCE ${TEST_SOURCES})
     message(${TEST_NAME})
 
     add_executable(${TEST_NAME} ${TEST_SOURCE} ${MODULE_SOURCES})
-    target_link_libraries(${TEST_NAME} PRIVATE ${COMMON_LINK_LIBRARIES} )
+    target_include_directories(${TEST_NAME} PRIVATE ${EXEC_INCLUE_DIRS} )
+    target_link_libraries(${TEST_NAME}
+        ${EXEC_LINK_LIBRARIES} cvdrone)
 endforeach()
