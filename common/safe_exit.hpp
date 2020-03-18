@@ -7,6 +7,9 @@ inline namespace Common
 namespace ThreadRoom
 {
 
+struct thread_abort {
+};
+
 void setExitHandler();
 
 void enter();

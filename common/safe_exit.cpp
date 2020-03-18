@@ -47,6 +47,9 @@ void enter()
 
 bool toExit()
 {
+    if (to_exit) {
+        throw thread_abort{};
+    }
     return to_exit;
 }
 
