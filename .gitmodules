@@ -1,0 +1,3 @@
+[submodule "external/cvdrone"]
+	path = external/cvdrone
+	url = https://github.com/pemayfes2020/cvdrone
