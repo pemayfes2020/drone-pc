@@ -40,6 +40,7 @@ set(EXEC_LINK_LIBRARIES
 # make static library from cvdrone sources
 file(GLOB CVDRONE_SOURCES ${EXTERNAL_DIR}/cvdrone/src/ardrone/*.cpp)
 add_library(cvdrone STATIC ${CVDRONE_SOURCES})
+set_target_properties(cvdrone PROPERTIES LINKER_LANGUAGE CXX)
 target_link_libraries(cvdrone
         m
         pthread

@@ -1,10 +1,13 @@
 #include "kinect.hpp"
 #include "logger.hpp"
+#include "safe_exit.hpp"
 
 #include <cstdlib>
 #include <iostream>
 #include <memory>
+#include <mutex>
 #include <string>
+#include <thread>
 
 namespace Kinect
 {
@@ -48,8 +51,8 @@ public:
 
         listener = std::make_shared<libfreenect2::SyncMultiFrameListener>(
             libfreenect2::Frame::Color
-                | libfreenect2::Frame::Ir
-                | libfreenect2::Frame::Depth);
+            | libfreenect2::Frame::Ir
+            | libfreenect2::Frame::Depth);
 
         device->setColorFrameListener(listener.get());
         device->setIrAndDepthFrameListener(listener.get());
@@ -63,8 +66,8 @@ public:
         // Output Informations
         std::cout << "Version: " << LIBFREENECT2_VERSION << std::endl;
 
-        std::cout << "device serial: " << device->getSerialNumber() << std::endl;
-        std::cout << "device firmware: " << device->getFirmwareVersion() << std::endl;
+        std::cout << "[info] [Kinect] device serial: " << device->getSerialNumber() << std::endl;
+        std::cout << "[info] [Kinect] device firmware: " << device->getFirmwareVersion() << std::endl;
     }
     ~KinectManager()
     {
@@ -75,7 +78,7 @@ public:
     void update()
     {
         if (!listener->waitForNewFrame(frames, 10 * 1000)) {
-            std::cerr << "timeout!" << std::endl;
+            std::cerr << "[error] [Kinect] timeout!" << std::endl;
             std::exit(EXIT_FAILURE);
         }
 
@@ -105,29 +108,38 @@ public:
     {
         return images;
     }
-
-    static KinectManager* getInstance()
-    {
-        static KinectManager instance;
-        return &instance;
-    }
 };
 
-std::unique_ptr<KinectManager> kinect;
+Images images;
+std::mutex mutex_images;
 
-void init()
+void start()
 {
-    kinect = std::make_unique<KinectManager>();
-}
+    std::thread{
+        [&images]() mutable {
+            ThreadRoom::enter();
 
-void update()
-{
-    kinect->update();
+            try {
+                KinectManager kinect;
+
+                while (!ThreadRoom::toExit()) {
+                    kinect.update();
+                    std::lock_guard<std::mutex> lock{mutex_images};
+                    images = kinect.getImages();
+                }
+
+            } catch (ThreadRoom::thread_abort) {
+                ThreadRoom::exit();
+                return;
+            }
+        }}
+        .detach();
 }
 
 Images getImages()
 {
-    return kinect->getImages();
+    std::lock_guard<std::mutex> lock{mutex_images};
+    return images;
 }
 
 }  // namespace Kinect

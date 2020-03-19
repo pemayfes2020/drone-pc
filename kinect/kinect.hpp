@@ -17,8 +17,7 @@ struct Images {
     cv::Mat depth;
 };
 
-void init();
-void update();
+void start();
 Images getImages();
 
 }  // namespace Kinect
