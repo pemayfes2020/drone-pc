@@ -21,10 +21,18 @@ find_package(Boost 1.65.1 REQUIRED
 
 find_package(freenect2 REQUIRED)
 find_package(OpenCV REQUIRED)
+find_package(Eigen3 REQUIRED)
+
+include_directories(
+    ${OPENGL_INCLUDE_DIR}
+    ${GLUT_INCLUDE_DIR}
+    ${EIGEN3_INCLUDE_DIR}
+    )
 
 set(EXEC_INCLUE_DIRS
     ${freenect2_INCLUDE_DIRS}
     ${OpenCV_INCLUDE_DIRS}
+    ${EIGEN_INCLUDE_DIRS}
     ${Boost_INCLUDE_DIRS}
     kinect esp32 control drone common
     ${EXTERNAL_DIR}/cvdrone/src/
