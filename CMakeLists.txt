@@ -46,12 +46,16 @@ set(MAIN_LINK_LIBRARIES
 
 set(AR_INCLUDE_DIRS
     ${OpenCV_INCLUDE_DIRS}
+    ${Boost_INCLUDE_DIRS}
     basic ar
     ${EXTERNAL_DIR}/cvdrone/src/
     )
 
 set(AR_LINK_LIBRARIES
     ${OpenCV_LIBRARIES}
+    ${Boost_LIBRARY_DIRS}
+    ${Boost_FILESYSTEM_LIBRARY}
+    ${Boost_SYSTEM_LIBRARY}
     pthread
     )
 
