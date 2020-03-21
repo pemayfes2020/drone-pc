@@ -29,21 +29,31 @@ include_directories(
     ${EIGEN3_INCLUDE_DIR}
     )
 
-set(EXEC_INCLUE_DIRS
+set(MAIN_INCLUDE_DIRS
     ${freenect2_INCLUDE_DIRS}
     ${OpenCV_INCLUDE_DIRS}
     ${EIGEN_INCLUDE_DIRS}
     ${Boost_INCLUDE_DIRS}
-    kinect esp32 control drone common params
-    ${EXTERNAL_DIR}/cvdrone/src/
+    kinect esp32 control drone basic params
     )
 
-set(EXEC_LINK_LIBRARIES
+set(MAIN_LINK_LIBRARIES
     ${freenect2_LIBRARIES}
     ${OpenCV_LIBRARIES}
     ${Boost_LIBRARY_DIRS}
     ${Boost_FILESYSTEM_LIBRARY}
     ${Boost_SYSTEM_LIBRARY})
+
+set(AR_INCLUDE_DIRS
+    ${OpenCV_INCLUDE_DIRS}
+    basic ar
+    ${EXTERNAL_DIR}/cvdrone/src/
+    )
+
+set(AR_LINK_LIBRARIES
+    ${OpenCV_LIBRARIES}
+    pthread
+    )
 
 # make static library from cvdrone sources
 file(GLOB CVDRONE_SOURCES ${EXTERNAL_DIR}/cvdrone/src/ardrone/*.cpp)
@@ -61,25 +71,45 @@ target_link_libraries(cvdrone
 
 # set main executable
 file(GLOB MAIN_SOURCES main.cpp)
-file(GLOB MODULE_SOURCES kinect/*.cpp esp32/*.cpp control/*.cpp drone/*.cpp common/*.cpp)
+file(GLOB MAIN_MODULE_SOURCES kinect/*.cpp esp32/*.cpp control/*.cpp drone/*.cpp basic/*.cpp)
 
-add_executable(main ${MAIN_SOURCES} ${MODULE_SOURCES})
+add_executable(main ${MAIN_SOURCES} ${MAIN_MODULE_SOURCES})
 
-target_include_directories(main PRIVATE ${EXEC_INCLUE_DIRS})
-target_link_libraries(main 
-    ${EXEC_LINK_LIBRARIES}
-    cvdrone
-    )
+target_include_directories(main PRIVATE ${MAIN_INCLUDE_DIRS})
+target_link_libraries(main ${MAIN_LINK_LIBRARIES})
 
-# set test executables
-file(GLOB TEST_SOURCES testsuite/*.cpp)
+# set ar executable
+file(GLOB AR_SOURCES main_ar.cpp)
+file(GLOB AR_MODULE_SOURCES ar/*.cpp basic/*.cpp)
 
-foreach(TEST_SOURCE ${TEST_SOURCES})
+add_executable(ar ${AR_SOURCES} ${AR_MODULE_SOURCES})
+
+target_include_directories(ar PRIVATE ${AR_INCLUDE_DIRS})
+target_link_libraries(ar ${AR_LINK_LIBRARIES} cvdrone)
+
+
+# set main test executables
+file(GLOB MAIN_TEST_SOURCES testsuite/main/*.cpp)
+
+foreach(TEST_SOURCE ${MAIN_TEST_SOURCES})
     get_filename_component(TEST_NAME ${TEST_SOURCE} NAME_WE)
     message(${TEST_NAME})
 
-    add_executable(${TEST_NAME} ${TEST_SOURCE} ${MODULE_SOURCES})
-    target_include_directories(${TEST_NAME} PRIVATE ${EXEC_INCLUE_DIRS} )
+    add_executable(${TEST_NAME} ${TEST_SOURCE} ${MAIN_MODULE_SOURCES})
+    target_include_directories(${TEST_NAME} PRIVATE ${MAIN_INCLUDE_DIRS} )
+    target_link_libraries(${TEST_NAME} ${MAIN_LINK_LIBRARIES})
+endforeach()
+
+# set ar test executables
+file(GLOB AR_TEST_SOURCES testsuite/ar/*.cpp)
+
+foreach(TEST_SOURCE ${AR_TEST_SOURCES})
+    get_filename_component(TEST_NAME ${TEST_SOURCE} NAME_WE)
+    message(${TEST_NAME})
+
+    add_executable(${TEST_NAME} ${TEST_SOURCE} ${AR_MODULE_SOURCES})
+    target_include_directories(${TEST_NAME} PRIVATE ${AR_INCLUDE_DIRS} )
     target_link_libraries(${TEST_NAME}
-        ${EXEC_LINK_LIBRARIES} cvdrone)
+        ${AR_LINK_LIBRARIES}
+        cvdrone)
 endforeach()

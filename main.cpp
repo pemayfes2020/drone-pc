@@ -5,7 +5,6 @@
 
 #include <opencv/cv.hpp>
 
-#include <csignal>
 #include <iostream>
 
 int main()
