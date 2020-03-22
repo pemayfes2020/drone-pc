@@ -3,7 +3,7 @@
 #include <boost/units/io.hpp>
 #include <boost/units/systems/si.hpp>
 
-inline namespace Common
+inline namespace Basic
 {
 
 
@@ -54,4 +54,4 @@ DECLARE_LITERAL(Angular, SI::rad, rad)
 
 }  // namespace SILiteral
 
-}  // namespace Common
+}  // namespace Basic

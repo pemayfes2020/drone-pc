@@ -2,6 +2,8 @@
 
 #include <string>
 
+inline namespace Basic
+{
 namespace UnixSocketServer
 {
 
@@ -11,3 +13,4 @@ void write(const std::string& str);
 std::string read();
 
 }  // namespace UnixSocketServer
+}  // namespace Basic

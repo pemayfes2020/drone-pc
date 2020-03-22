@@ -5,6 +5,9 @@
 #include <iostream>
 #include <memory>
 
+inline namespace Basic
+{
+
 namespace UnixSocketServer
 {
 
@@ -65,3 +68,4 @@ std::string read()
 }
 
 }  // namespace UnixSocketServer
+}  // namespace Basic

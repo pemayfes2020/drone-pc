@@ -34,7 +34,7 @@ set(MAIN_INCLUDE_DIRS
     ${OpenCV_INCLUDE_DIRS}
     ${EIGEN_INCLUDE_DIRS}
     ${Boost_INCLUDE_DIRS}
-    kinect esp32 control drone basic params
+    kinect esp32 control drone basic params common
     )
 
 set(MAIN_LINK_LIBRARIES
@@ -47,8 +47,8 @@ set(MAIN_LINK_LIBRARIES
 set(AR_INCLUDE_DIRS
     ${OpenCV_INCLUDE_DIRS}
     ${Boost_INCLUDE_DIRS}
-    basic ar
-    ${EXTERNAL_DIR}/cvdrone/src/
+    basic ar common
+    ${EXTERNAL_DIR}/cvdrones/src/
     )
 
 set(AR_LINK_LIBRARIES
@@ -60,10 +60,10 @@ set(AR_LINK_LIBRARIES
     )
 
 # make static library from cvdrone sources
-file(GLOB CVDRONE_SOURCES ${EXTERNAL_DIR}/cvdrone/src/ardrone/*.cpp)
-add_library(cvdrone STATIC ${CVDRONE_SOURCES})
-set_target_properties(cvdrone PROPERTIES LINKER_LANGUAGE CXX)
-target_link_libraries(cvdrone
+file(GLOB CVDRONE_SOURCES ${EXTERNAL_DIR}/cvdrones/src/ardrone/*.cpp)
+add_library(cvdrones STATIC ${CVDRONE_SOURCES})
+set_target_properties(cvdrones PROPERTIES LINKER_LANGUAGE CXX)
+target_link_libraries(cvdrones
         m
         pthread
         avutil
@@ -89,7 +89,7 @@ file(GLOB AR_MODULE_SOURCES ar/*.cpp basic/*.cpp)
 add_executable(ar ${AR_SOURCES} ${AR_MODULE_SOURCES})
 
 target_include_directories(ar PRIVATE ${AR_INCLUDE_DIRS})
-target_link_libraries(ar ${AR_LINK_LIBRARIES} cvdrone)
+target_link_libraries(ar ${AR_LINK_LIBRARIES} cvdrones)
 
 
 # set main test executables
@@ -115,5 +115,5 @@ foreach(TEST_SOURCE ${AR_TEST_SOURCES})
     target_include_directories(${TEST_NAME} PRIVATE ${AR_INCLUDE_DIRS} )
     target_link_libraries(${TEST_NAME}
         ${AR_LINK_LIBRARIES}
-        cvdrone)
+        cvdrones)
 endforeach()

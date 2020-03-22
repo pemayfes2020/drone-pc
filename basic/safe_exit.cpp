@@ -7,7 +7,7 @@
 #include <mutex>
 #include <vector>
 
-inline namespace Common
+inline namespace Basic
 {
 // 安全な終了処理を提供する
 namespace ThreadRoom
@@ -66,4 +66,4 @@ std::thread::id exit()
 }
 
 }  // namespace ThreadRoom
-}  // namespace Common
+}  // namespace Basic

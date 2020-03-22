@@ -2,7 +2,7 @@
 
 #include <thread>
 
-inline namespace Common
+inline namespace Basic
 {
 namespace ThreadRoom
 {
@@ -19,4 +19,4 @@ bool toExit();
 std::thread::id exit();
 
 }  // namespace ThreadRoom
-}  // namespace Common
+}  // namespace Basic
