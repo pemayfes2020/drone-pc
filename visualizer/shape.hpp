@@ -49,6 +49,18 @@ struct Rectangular : public ShapeBase {
     virtual void draw() const override;
 };
 
+struct Cylinder : public ShapeBase {
+    double radius;
+    double height;
+
+    Cylinder(const Eigen::Vector3d& position, const Eigen::Vector3d& rotation, const double radius, const double height) : ShapeBase(position, rotation), radius(radius), height(height) {}
+
+    virtual void draw() const override;
+};
+
+struct RugbyBall : public ShapeBase {
+};
+
 struct Shagai : public ShapeBase {
     Shagai(const Eigen::Vector3d& position, const Eigen::Vector3d& rotation) : ShapeBase(position, rotation) {}
 
