@@ -22,17 +22,16 @@ find_package(Boost 1.65.1 REQUIRED
 find_package(freenect2 REQUIRED)
 find_package(OpenCV REQUIRED)
 find_package(Eigen3 REQUIRED)
+find_package(OpenGL REQUIRED)
+find_package(GLUT REQUIRED)
 
 include_directories(
-    ${OPENGL_INCLUDE_DIR}
-    ${GLUT_INCLUDE_DIR}
-    ${EIGEN3_INCLUDE_DIR}
+    ${OpenCV_INCLUDE_DIRS}
     )
 
 set(MAIN_INCLUDE_DIRS
     ${freenect2_INCLUDE_DIRS}
-    ${OpenCV_INCLUDE_DIRS}
-    ${EIGEN_INCLUDE_DIRS}
+    ${EIGEN3_INCLUDE_DIRS}
     ${Boost_INCLUDE_DIRS}
     kinect esp32 control drone basic params common
     )
@@ -52,11 +51,22 @@ set(AR_INCLUDE_DIRS
     )
 
 set(AR_LINK_LIBRARIES
-    ${OpenCV_LIBRARIES}
     ${Boost_LIBRARY_DIRS}
     ${Boost_FILESYSTEM_LIBRARY}
     ${Boost_SYSTEM_LIBRARY}
     pthread
+    )
+
+set(VISUALIZER_INCLUDE_DIRS
+    ${OPENGL_INCLUDE_DIR}
+    ${GLUT_INCLUDE_DIR}
+    ${EIGEN3_INCLUDE_DIRS}
+    basic visualizer common
+    )
+
+set(VISUALIZER_LINK_LIBRARIES
+    ${OPENGL_LIBRARIES}
+    ${GLUT_LIBRARY}
     )
 
 # make static library from cvdrone sources
@@ -91,6 +101,15 @@ add_executable(ar ${AR_SOURCES} ${AR_MODULE_SOURCES})
 target_include_directories(ar PRIVATE ${AR_INCLUDE_DIRS})
 target_link_libraries(ar ${AR_LINK_LIBRARIES} cvdrones)
 
+# set visualizer executable
+file(GLOB VISUALIZER_SOURCES main_viz.cpp)
+file(GLOB VISUALIZER_MODULE_SOURCES visualizer/*.cpp)
+
+add_executable(visualizer ${VISUALIZER_SOURCES} ${VISUALIZER_MODULE_SOURCES})
+
+target_include_directories(visualizer PRIVATE ${VISUALIZER_INCLUDE_DIRS})
+target_link_libraries(visualizer ${VISUALIZER_LINK_LIBRARIES})
+
 
 # set main test executables
 file(GLOB MAIN_TEST_SOURCES testsuite/main/*.cpp)
@@ -116,4 +135,18 @@ foreach(TEST_SOURCE ${AR_TEST_SOURCES})
     target_link_libraries(${TEST_NAME}
         ${AR_LINK_LIBRARIES}
         cvdrones)
+endforeach()
+
+# set visualizer test executables
+file(GLOB VISUALIZER_TEST_SOURCES testsuite/visualizer/*.cpp)
+
+foreach(TEST_SOURCE ${VISUALIZER_TEST_SOURCES})
+    get_filename_component(TEST_NAME ${TEST_SOURCE} NAME_WE)
+    message(${TEST_NAME})
+
+    add_executable(${TEST_NAME} ${TEST_SOURCE} ${AR_MODULE_SOURCES})
+    target_include_directories(${TEST_NAME} PRIVATE ${VISUALIZER_INCLUDE_DIRS} )
+    target_link_libraries(${TEST_NAME}
+        ${VISUALIZER_LINK_LIBRARIES}
+        )
 endforeach()
