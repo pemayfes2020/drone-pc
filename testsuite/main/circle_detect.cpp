@@ -20,7 +20,7 @@ int main(int argc, char* argv[])
         //cv::imshow("ir", ir);
         cv::imshow("depth", depth);
 
-        auto [x,y] = circleSpace::detectCircle(rgb);
+        auto [x,y] = circleSpace::detectCircle(rgb, 1);
 
         std::cout << "(x,y) = (" << x << ", "<< y << ") " << std::endl; 
         cv::waitKey(1);

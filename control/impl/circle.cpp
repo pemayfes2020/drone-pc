@@ -10,7 +10,7 @@
 
 
 namespace circleSpace{
-   std::pair<int,int> detectCircle(cv::Mat image){
+   std::pair<int,int> detectCircle(cv::Mat image, int show){
     cv::Mat hsv, frame, hue, hue1, hue2, saturation, value, hue_saturation, image_black_white;  
 
     std::vector<std::pair<cv::Point,double>> circles;
@@ -45,6 +45,8 @@ namespace circleSpace{
     std::vector<cv::Point2f> center( contours.size() );
     std::vector<float> radius( contours.size() );
 
+    double cand_circle_label = 0.0;
+    int circle_ind = 0;
 
     for(int i = 0; i < contours.size(); i++ ){
       cv::approxPolyDP( cv::Mat(contours[i]), contours_poly[i], 3, true );
@@ -54,18 +56,22 @@ namespace circleSpace{
             double S = cv::contourArea(contours[i]);
             double circle_label = 4 * M_PI * S / (L * L);
 
-            if(circle_label > 0.47  && radius[i] > 8.0){
+            /*if(circle_label > 0.47  && radius[i] > 8.0){
                 circle(image, center[i], (int)radius[i], cv::Scalar(0, 0, 255), 2, 8, 0 );
                 std::cout << "center = (" << center[i].x << ' ' << center[i].y << ") r = " << radius[i] << std::endl;
                 circles.push_back(std::make_pair(cv::Point(cvRound(center[i].x),cvRound(center[i].y)),radius[i]));
                 //cout << "radius = " << radius[i] << " S = " << S << endl;
+            }*/
+            if(circle_label > cand_circle_label){
+              cand_circle_label = circle_label;
+              circle_ind = i;
             }
         }
 
-    cv::imshow("kineImg",image);
+    if(show) cv::imshow("kineImg",image);
 
       if(center.size()){
-        return {center[0].x,center[0].y};
+        return {center[circle_ind].x,center[circle_ind].y};
       }else{
         return {0,0};
       }
