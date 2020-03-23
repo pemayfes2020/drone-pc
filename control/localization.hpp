@@ -11,8 +11,8 @@ namespace Control
 
 namespace Localization
 {
-
-std::array<Length, 2> estimatePosWithKinect(cv::Mat rgb, cv::Mat depth, Length z);
+double bilinear(cv::Mat depth, int x_rgb, int y_rgb);
+std::array<Length, 2> get2Dpos(cv::Mat rgb, cv::Mat depth, Length z);
 
 
 }  // namespace Localization

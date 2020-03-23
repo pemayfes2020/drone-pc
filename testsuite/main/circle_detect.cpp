@@ -1,6 +1,6 @@
-#include "kinect.hpp"
 #include "circle.hpp"
-
+#include "kinect.hpp"
+#include "localization.hpp"
 #include <opencv/cv.hpp>
 
 #include <cstdlib>
@@ -20,9 +20,8 @@ int main(int argc, char* argv[])
         //cv::imshow("ir", ir);
         cv::imshow("depth", depth);
 
-        auto [x,y] = circleSpace::detectCircle(rgb);
+        auto [r, t] = Control::Localization::get2Dpos(rgb, depth, 0);
 
-        std::cout << "(x,y) = (" << x << ", "<< y << ") " << std::endl; 
         cv::waitKey(1);
     }
 
