@@ -1,17 +1,21 @@
-#include "socket_server.hpp"
+#include "socket.hpp"
 
 #include <iostream>
 
+struct DataType {
+    int32_t x;
+    int32_t y;
+    int32_t z;
+};
+
+
 int main()
 {
-    UnixSocketServer::init("/tmp/ar.sock");
+    UnixSocket::Server server("/tmp/ar.sock");
 
-    while (true) {
-        std::string hoge;
-        std::cin >> hoge;
-        UnixSocketServer::write(hoge);
-        std::cout << UnixSocketServer::read() << std::endl;
-    }
+    server.write<DataType>(DataType{1, 2, 3});
+    auto data = server.read<DataType>();
+    std::cout << data.x << ' ' << data.y << ' ' << data.z << std::endl;
 
     return 0;
 }

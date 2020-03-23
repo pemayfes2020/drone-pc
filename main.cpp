@@ -1,6 +1,7 @@
 #include "drone.hpp"
 #include "esp32.hpp"
 #include "kinect.hpp"
+#include "localization.hpp"
 #include "safe_exit.hpp"
 
 #include <opencv/cv.hpp>
@@ -19,9 +20,6 @@ int main()
 
     while (true) {
         auto [rgb, ir, depth] = Kinect::getImages();
-
-        cv::imshow("rgb", rgb);
-        cv::waitKey(1);
     }
 
     return 0;
