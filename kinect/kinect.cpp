@@ -86,20 +86,17 @@ public:
         libfreenect2::Frame* ir = frames[libfreenect2::Frame::Ir];
         libfreenect2::Frame* depth = frames[libfreenect2::Frame::Depth];
 
-        images.rgb = cv::Mat{
+        cv::flip(cv::Mat{
             (int)rgb->height, (int)rgb->width,
-            CV_8UC4, rgb->data}
-                         .clone();
+            CV_8UC4, rgb->data}, images.rgb, 0);
 
-        images.ir = cv::Mat{
+        cv::flip(cv::Mat{
             (int)ir->height, (int)ir->width,
-            CV_32F, ir->data}
-                        .clone();
+            CV_32F, ir->data}, images.ir, 0);
 
-        images.depth = cv::Mat{
+        cv::flip(cv::Mat{
             (int)depth->height, (int)depth->width,
-            CV_32F, depth->data}
-                           .clone();
+            CV_32F, depth->data}, images.depth, 0);
 
         listener->release(frames);
     }

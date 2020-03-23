@@ -33,7 +33,7 @@ set(MAIN_INCLUDE_DIRS
     ${freenect2_INCLUDE_DIRS}
     ${EIGEN3_INCLUDE_DIRS}
     ${Boost_INCLUDE_DIRS}
-    kinect esp32 control drone basic params common
+    kinect esp32 control control/impl drone basic params common
     )
 
 set(MAIN_LINK_LIBRARIES
@@ -85,7 +85,7 @@ target_link_libraries(cvdrones
 
 # set main executable
 file(GLOB MAIN_SOURCES main.cpp)
-file(GLOB MAIN_MODULE_SOURCES kinect/*.cpp esp32/*.cpp control/*.cpp drone/*.cpp basic/*.cpp)
+file(GLOB MAIN_MODULE_SOURCES kinect/*.cpp esp32/*.cpp control/*.cpp control/impl/*.cpp drone/*.cpp basic/*.cpp circle/*.cpp)
 
 add_executable(main ${MAIN_SOURCES} ${MAIN_MODULE_SOURCES})
 
