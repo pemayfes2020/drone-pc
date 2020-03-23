@@ -1,11 +1,12 @@
 #include "kinect.hpp"
 
+#include "safe_exit.hpp"
 #include <iostream>
 
 
 int main()
 {
-
+    ThreadRoom::setExitHandler();
     Kinect::start();
 
     while(true) {
