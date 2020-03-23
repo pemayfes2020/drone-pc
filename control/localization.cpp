@@ -34,15 +34,27 @@ double bilinear(cv::Mat depth, int x_rgb, int y_rgb)
     double x = x_rgb * width_depth / double(width);
     double y = y_rgb * height_depth / double(height);
 
-    return (f(x) + 1 - x) * ((f(y) + 1 - y) * depth.at<float>(f(x), f(y)) + (y - f(y)) * depth.at<float>(f(x), f(y) + 1)) + (x - f(x)) * ((f(y) + 1 - y) * depth.at<float>(f(x) + 1, f(y)) + (y - f(y)) * depth.at<float>(f(x) + 1, f(y) + 1));
+    double _x = std::floor(x);
+    double _y = std::floor(y);
+
+    Eigen::Matrix<double, 1, 2> A;
+    Eigen::Matrix2d B;
+    Eigen::Vector2d C;
+    A << _y + 1 - y, y - _y;
+    B << depth.at<float>(_x, _y), depth.at<float>(_x + 1, _y),
+        depth.at<float>(_x, _y + 1), depth.at<float>(_x + 1, _y);
+
+    C << _x + 1 - x, x - _x;
+
+    return A * B * C;
 }
 
-std::array<Length, 2> get2Dpos(cv::Mat rgb, cv::Mat depth, Length z)
+std::array<Length, 2> get2Dpos(cv::Mat image_rgb, cv::Mat image_depth, Length z)
 {
     // TODO RGB画像とDepth画像、既知のzからxy平面内の座標を推定する
 
     //impl/circle.cpp内のdetectCircleから検出した円のkinect画面内座標を受け取る。
-    auto [x, y] = circleSpace::detectCircle(rgb, 1);
+    auto [x, y] = circleSpace::detectCircle(image_rgb, 1);
 
     //中心
     int center_x = (width - 1) / 2;
@@ -51,13 +63,16 @@ std::array<Length, 2> get2Dpos(cv::Mat rgb, cv::Mat depth, Length z)
     double theta = vertical * (y - center_y) / height;
     double phi = horizontal * (x - center_x) / width;
 
-    double dp = bilinear(depth, x, y);  //中心8近傍の平均?
+    double depth = bilinear(image_depth, x, y);  //中心8近傍の平均?
 
-    Eigen::Matrix<double, 3, 1> ang{1.0, -1.0 * tan(phi), -1.0 * tan(theta) / cos(phi)};
+    Eigen::Vector3d angle{
+        1.0,
+        -tan(phi),
+        -tan(theta) / cos(phi)};
 
-    Eigen::Matrix<double, 3, 1> vec_to_drone = dp * ang + kinect_r;
+    Eigen::Vector3d vec_to_drone = depth * angle + kinect_r;
 
-    std::cout << vec_to_drone(0) << ' ' << vec_to_drone(1) << ' ' << vec_to_drone(2) << std::endl;
+    std::cout << "Drone Pos(x, y, z): " << vec_to_drone << std::endl;
 
     return std::array<Length, 2>{0.0_mm, 0.0_mm};
 }
