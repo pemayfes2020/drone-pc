@@ -8,6 +8,7 @@
 #include <mutex>
 #include <string>
 #include <thread>
+#include <atomic>
 
 namespace Kinect
 {
@@ -87,19 +88,16 @@ public:
         libfreenect2::Frame* depth = frames[libfreenect2::Frame::Depth];
 
         cv::flip(cv::Mat{
-                     (int)rgb->height, (int)rgb->width,
-                     CV_8UC4, rgb->data},
-            images.rgb, 1);
+            (int)rgb->height, (int)rgb->width,
+            CV_8UC4, rgb->data}, images.rgb, 1);
 
         cv::flip(cv::Mat{
-                     (int)ir->height, (int)ir->width,
-                     CV_32F, ir->data},
-            images.ir, 1);
+            (int)ir->height, (int)ir->width,
+            CV_32F, ir->data}, images.ir, 1);
 
         cv::flip(cv::Mat{
-                     (int)depth->height, (int)depth->width,
-                     CV_32F, depth->data},
-            images.depth, 1);
+            (int)depth->height, (int)depth->width,
+            CV_32F, depth->data}, images.depth, 1);
 
         listener->release(frames);
     }
@@ -112,11 +110,12 @@ public:
 
 Images images;
 std::mutex mutex_images;
+std::atomic_bool image_ready = false;
 
 void start()
 {
     std::thread{
-        [&images]() mutable {
+        [&images, &image_ready]() mutable {
             ThreadRoom::enter();
 
             try {
@@ -126,6 +125,7 @@ void start()
                     kinect.update();
                     std::lock_guard<std::mutex> lock{mutex_images};
                     images = kinect.getImages();
+                    image_ready = true;
                 }
 
             } catch (ThreadRoom::thread_abort) {
@@ -138,6 +138,8 @@ void start()
 
 Images getImages()
 {
+    while(!image_ready) {
+    }
     std::lock_guard<std::mutex> lock{mutex_images};
     return images;
 }

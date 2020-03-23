@@ -1,6 +1,8 @@
 #include "circle.hpp"
 #include "kinect.hpp"
 #include "localization.hpp"
+#include "safe_exit.hpp"
+
 #include <opencv/cv.hpp>
 
 #include <cstdlib>
@@ -10,6 +12,7 @@
 
 int main(int argc, char* argv[])
 {
+    ThreadRoom::setExitHandler();
 
     Kinect::start();
 
