@@ -19,14 +19,16 @@ struct Object {
 void init(int argc, char** argv);
 void start(void (*callback)(std::vector<Object>&));
 
-void rotateCamera(const Eigen::Vector3d& rotation);
+void rotateCamera(const Eigen::Vector3f& rotation);
 
 void setWindowSize(int height, int width);
 void setBGColor(Color color);
 
-Object& addSphere(const Eigen::Vector3d& position, const Eigen::Vector3d& rotation, double radius, Color color);
-Object& addPlane(const Eigen::Vector3d& position, const Eigen::Vector3d& rotation, double size, Color color);
-Object& addRectangular(const Eigen::Vector3d& position, const Eigen::Vector3d& rotation, const Eigen::Vector3d& size, Color color);
-Object& addTeapot(const Eigen::Vector3d& position, const Eigen::Vector3d& rotation, int size, Color color);
+Object& addSphere(const Eigen::Vector3f& position, const Eigen::Vector3f& rotation, float radius, Color color);
+Object& addPlane(const Eigen::Vector3f& position, const Eigen::Vector3f& rotation, float size, Color color);
+Object& addRectangular(const Eigen::Vector3f& position, const Eigen::Vector3f& rotation, const Eigen::Vector3f& size, Color color);
+Object& addCylinder(const Eigen::Vector3f& position, const Eigen::Vector3f& rotation, float radius, float height, Color color);
+Object& addTeapot(const Eigen::Vector3f& position, const Eigen::Vector3f& rotation, int size, Color color);
+Object& addSTLModel(const Eigen::Vector3f& position, const Eigen::Vector3f& rotation, const std::string filepath, Color color);
 
 }  // namespace Graphic

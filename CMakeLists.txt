@@ -41,33 +41,30 @@ set(MAIN_LINK_LIBRARIES
     ${OpenCV_LIBRARIES}
     ${Boost_LIBRARY_DIRS}
     ${Boost_FILESYSTEM_LIBRARY}
-    ${Boost_SYSTEM_LIBRARY})
+    ${Boost_SYSTEM_LIBRARY}
+    )
 
 set(AR_INCLUDE_DIRS
     ${OpenCV_INCLUDE_DIRS}
     ${Boost_INCLUDE_DIRS}
     basic ar common
-    ${EXTERNAL_DIR}/cvdrones/src/
-    )
+    ${EXTERNAL_DIR}/cvdrones/src)
 
 set(AR_LINK_LIBRARIES
     ${Boost_LIBRARY_DIRS}
     ${Boost_FILESYSTEM_LIBRARY}
     ${Boost_SYSTEM_LIBRARY}
-    pthread
-    )
+    pthread)
 
 set(VISUALIZER_INCLUDE_DIRS
     ${OPENGL_INCLUDE_DIR}
     ${GLUT_INCLUDE_DIR}
     ${EIGEN3_INCLUDE_DIRS}
-    basic visualizer common
-    )
+    visualizer common)
 
 set(VISUALIZER_LINK_LIBRARIES
     ${OPENGL_LIBRARIES}
-    ${GLUT_LIBRARY}
-    )
+    ${GLUT_LIBRARY})
 
 # make static library from cvdrone sources
 file(GLOB CVDRONE_SOURCES ${EXTERNAL_DIR}/cvdrones/src/ardrone/*.cpp)
@@ -144,7 +141,7 @@ foreach(TEST_SOURCE ${VISUALIZER_TEST_SOURCES})
     get_filename_component(TEST_NAME ${TEST_SOURCE} NAME_WE)
     message(${TEST_NAME})
 
-    add_executable(${TEST_NAME} ${TEST_SOURCE} ${AR_MODULE_SOURCES})
+    add_executable(${TEST_NAME} ${TEST_SOURCE} ${VISUALIZER_MODULE_SOURCES})
     target_include_directories(${TEST_NAME} PRIVATE ${VISUALIZER_INCLUDE_DIRS} )
     target_link_libraries(${TEST_NAME}
         ${VISUALIZER_LINK_LIBRARIES}
