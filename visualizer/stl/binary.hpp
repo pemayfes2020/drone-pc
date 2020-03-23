@@ -16,6 +16,24 @@ struct Binary {
 
     std::vector<Polygon> polygons;
 
+    float parse_float(std::ifstream& file)
+    {
+        union {
+            char buf[4];
+            float val;
+        } data;
+        file.read(data.buf, 4);
+        return data.val;
+    }
+
+    Eigen::Vector3f parse_point(std::ifstream& file)
+    {
+        return Eigen::Vector3f{
+            parse_float(file),
+            parse_float(file),
+            parse_float(file)};
+    }
+
     Binary(const std::string& filepath)
     {
         std::ifstream file(filepath, std::ios::binary | std::ios::in);
@@ -40,21 +58,17 @@ struct Binary {
         // (84-) Polygon情報
         // STLファイルはlittle endian
         for (int i = 0; i < size_data.N; ++i) {
-            union {
-                char buf[4 * 3 * 4 + 2];
-                float n[3];
-                float r1[3];
-                float r2[3];
-                float r3[3];
-                uint16_t flag_unused;
-            } p;
-            file.read(p.buf, sizeof(p));
-            polygons.push_back(
-                Polygon{
-                    Eigen::Vector3f{p.n[0], p.n[1], p.n[2]},
-                    Eigen::Vector3f{p.r1[0], p.r1[1], p.r1[2]},
-                    Eigen::Vector3f{p.r2[0], p.r2[1], p.r2[2]},
-                    Eigen::Vector3f{p.r3[0], p.r3[1], p.r3[2]}});
+            Polygon polygon;
+
+            polygon.normal = parse_point(file);
+            polygon.r1 = parse_point(file);
+            polygon.r2 = parse_point(file);
+            polygon.r3 = parse_point(file);
+
+            [[maybe_unused]] char flag[2];
+
+            file.read(flag, 2);
+            polygons.push_back(polygon);
         }
     }
 };
