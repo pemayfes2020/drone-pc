@@ -14,7 +14,7 @@ namespace Graphic
 
 using namespace Eigen;
 
-constexpr double PI = 3.1415926535;
+constexpr float PI = 3.1415926535;
 
 static std::vector<Object> objects;
 static void (*user_callback)(std::vector<Object>&);
@@ -22,12 +22,12 @@ static void (*user_callback)(std::vector<Object>&);
 static int window_height = 600;
 static int window_width = 600;
 
-static double cam_dist = 1000.0;
-static double cam_theta = PI / 4.0;
-static double cam_phi = PI / 5.0;
+static float cam_dist = 1000.0;
+static float cam_theta = PI / 4.0;
+static float cam_phi = PI / 5.0;
 
-Vector3d cam;
-Vector3d cam_top;
+Vector3f cam;
+Vector3f cam_top;
 
 static Color bg_color{0.0, 0.0, 0.0};
 
@@ -46,20 +46,20 @@ void setBGColor(Color color)
 
 void updateCameraPos()
 {
-    cam = Vector3d{
+    cam = Vector3f{
         cam_dist * std::cos(cam_theta) * std::cos(cam_phi),
         cam_dist * std::sin(cam_theta) * std::cos(cam_phi),
         cam_dist * std::sin(cam_phi)};
 
-    double norm = cam.norm();
-    double s = cam(2) / (cam(2) - norm * norm);
+    float norm = cam.norm();
+    float s = cam(2) / (cam(2) - norm * norm);
 
-    cam_top = s * cam + (1.0 - s) * Vector3d{0.0, 0.0, 1.0};
+    cam_top = s * cam + (1.0 - s) * Vector3f{0.0, 0.0, 1.0};
 }
 
 void drawCoordinate(int measure, float size)
 {
-    const auto drawLine = [](const Vector3d& from, const Vector3d& to) {
+    const auto drawLine = [](const Vector3f& from, const Vector3f& to) {
         //線幅
         glLineWidth(1.0);
         //線
@@ -84,7 +84,7 @@ void drawCoordinate(int measure, float size)
     }
 
     glDisable(GL_DEPTH_TEST);
-    Vector3d origin{0, 0, 0};
+    Vector3f origin{0, 0, 0};
     // x(Red)
     glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
     drawLine(origin, {(measure / 2 + 2) * size, 0, 0});
@@ -109,7 +109,7 @@ static void display(void)
     glPushMatrix();
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    gluPerspective(90.0, (double)window_width / window_height, 1.0, 10000.0);
+    gluPerspective(90.0, (float)window_width / window_height, 1.0, 10000.0);
 
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();  // 行列を初期化
@@ -119,7 +119,7 @@ static void display(void)
     drawCoordinate(20, 1000);
 
     for (auto& obj : objects) {
-        glColor3d(obj.color(0), obj.color(1), obj.color(2));
+        glColor3f(obj.color(0), obj.color(1), obj.color(2));
         obj.shape->start_draw();
         obj.shape->draw();
         obj.shape->end_draw();
@@ -137,7 +137,7 @@ static void reshape(int w, int h)
 
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    gluPerspective(120.0, (double)window_width / window_height, 1.0, 10000.0);
+    gluPerspective(120.0, (float)window_width / window_height, 1.0, 10000.0);
 
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();  // 行列を初期化
@@ -158,9 +158,9 @@ bool left_button_down = false;
 bool right_button_down = false;
 bool h_down = false;
 Vector2d pos{0, 0};
-double theta_ratio = PI * 3.0;
-double phi_ratio = PI * 1.0;
-double dist_ratio = 1000.0;
+float theta_ratio = PI * 3.0;
+float phi_ratio = PI * 1.0;
+float dist_ratio = 1000.0;
 
 void mouse(int button, int state, int x, int y)
 {
@@ -206,7 +206,7 @@ static void motion(int x, int y)
     glPushMatrix();
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    gluPerspective(120.0, (double)window_width / window_height, 1.0, 10000.0);
+    gluPerspective(120.0, (float)window_width / window_height, 1.0, 10000.0);
 
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();  // 行列を初期化
@@ -230,7 +230,7 @@ void key(unsigned char key, int x, int y)
         glPushMatrix();
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();
-        gluPerspective(120.0, (double)window_width / window_height, 1.0, 10000.0);
+        gluPerspective(120.0, (float)window_width / window_height, 1.0, 10000.0);
 
         glMatrixMode(GL_MODELVIEW);
         glLoadIdentity();  // 行列を初期化
@@ -283,14 +283,14 @@ void start(void (*callback)(std::vector<Object>&))
 }
 
 
-Object& addSphere(const Vector3d& position, const Vector3d& rotation, double radius, Color color)
+Object& addSphere(const Vector3f& position, const Vector3f& rotation, float radius, Color color)
 {
     objects.push_back(
         Object{color, std::make_shared<Shape::Sphere>(position, rotation, radius)});
     return objects.back();
 }
 
-Object& addPlane(const Eigen::Vector3d& position, const Eigen::Vector3d& rotation, double size, Color color)
+Object& addPlane(const Eigen::Vector3f& position, const Eigen::Vector3f& rotation, float size, Color color)
 {
     objects.push_back(
         Object{color, std::make_shared<Shape::Plane>(position, rotation, size)});
@@ -298,18 +298,32 @@ Object& addPlane(const Eigen::Vector3d& position, const Eigen::Vector3d& rotatio
 }
 
 
-Object& addRectangular(const Eigen::Vector3d& position, const Eigen::Vector3d& rotation, const Eigen::Vector3d& size, Color color)
+Object& addRectangular(const Eigen::Vector3f& position, const Eigen::Vector3f& rotation, const Eigen::Vector3f& size, Color color)
 {
     objects.push_back(
         Object{color, std::make_shared<Shape::Rectangular>(position, rotation, size)});
     return objects.back();
 }
 
+Object& addCylinder(const Eigen::Vector3f& position, const Eigen::Vector3f& rotation, float radius, float height, Color color)
+{
 
-Object& addTeapot(const Vector3d& position, const Vector3d& rotation, int size, Color color)
+    objects.push_back(
+        Object{color, std::make_shared<Shape::Cylinder>(position, rotation, radius, height)});
+    return objects.back();
+}
+
+Object& addTeapot(const Vector3f& position, const Vector3f& rotation, int size, Color color)
 {
     objects.push_back(
         Object{color, std::make_shared<Shape::Teapot>(position, rotation, size)});
+    return objects.back();
+}
+
+Object& addSTLModel(const Vector3f& position, const Vector3f& rotation, const std::string filepath, Color color)
+{
+    objects.push_back(
+        Object{color, std::make_shared<Shape::STLModel>(position, rotation, filepath)});
     return objects.back();
 }
 
