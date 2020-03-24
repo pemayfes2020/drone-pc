@@ -20,7 +20,6 @@ constexpr double vertical = 53.8 * M_PI / 180.0;
 
 Eigen::Matrix<double, 3, 1> kinect_r = {0, 0, 0};
 
-#define f(a) std::floor(a)
 //参考
 //https://www.jstage.jst.go.jp/article/isciesci/58/8/58_KJ00009469648/_pdf/-char/ja
 
@@ -41,16 +40,20 @@ double bilinear(cv::Mat depth, int x_rgb, int y_rgb)
 
     using dep = depth.at<float>;
 
-    Eigen::Matrix<double, 1, 2> A;
-    Eigen::Matrix2d B;
-    Eigen::Vector2d C;
-    A << _y + 1 - y, y - _y;
-    B << dep(_x, _y), dep(_x + 1, _y),
-        dep(_x, _y + 1), dep(_x + 1, _y + 1);
+    if (_x != width_depth - 1 && _y != height_depth - 1) {
+        Eigen::Matrix<double, 1, 2> A;
+        Eigen::Matrix2d B;
+        Eigen::Vector2d C;
+        A << _y + 1 - y, y - _y;
+        B << dep(_x, _y), dep(_x + 1, _y),
+            dep(_x, _y + 1), dep(_x + 1, _y + 1);
 
-    C << _x + 1 - x, x - _x;
+        C << _x + 1 - x, x - _x;
 
-    return A * B * C;
+        return A * B * C;
+    } else {
+        return dep(_x, _y);
+    }
 }
 
 std::array<Length, 2> get2Dpos(cv::Mat image_rgb, cv::Mat image_depth, Length z)
