@@ -10,6 +10,9 @@ constexpr int height = 1080;
 constexpr int width_depth = 512;
 constexpr int height_depth = 424;
 
+constexpr double width_ratio = (double)width_depth / width;
+constexpr double height_ratio = (double)height_depth / height;
+
 //    視野角について
 //    http://neareal.com/629/
 //    (水平)84.1 度 (垂直) 53.8 度
@@ -31,8 +34,8 @@ namespace Localization
 {
 double bilinear(cv::Mat depth, int x_rgb, int y_rgb)
 {
-    double x = x_rgb * width_depth / double(width);
-    double y = y_rgb * height_depth / double(height);
+    double x = x_rgb * width_ratio;
+    double y = y_rgb * height_ratio;
 
     double _x = std::floor(x);
     double _y = std::floor(y);
@@ -41,12 +44,19 @@ double bilinear(cv::Mat depth, int x_rgb, int y_rgb)
     Eigen::Matrix2d B;
     Eigen::Vector2d C;
     A << _y + 1 - y, y - _y;
-    B << depth.at<float>(_x, _y), depth.at<float>(_x + 1, _y),
+    try{
+        B << depth.at<float>(_x, _y), depth.at<float>(_x + 1, _y),
         depth.at<float>(_x, _y + 1), depth.at<float>(_x + 1, _y);
+    } catch(...) {
+        std::cerr << "out of bound error" << std::endl;
+        std::exit(EXIT_FAILURE);
+    }
 
     C << _x + 1 - x, x - _x;
 
-    return A * B * C;
+    // return (A * B * C)(0);
+
+    return depth.at<float>(_x, _y);
 }
 
 std::array<Length, 2> get2Dpos(cv::Mat image_rgb, cv::Mat image_depth, Length z)
@@ -72,6 +82,7 @@ std::array<Length, 2> get2Dpos(cv::Mat image_rgb, cv::Mat image_depth, Length z)
 
     Eigen::Vector3d vec_to_drone = depth * angle + kinect_r;
 
+    std::cout << "depth: " << depth << std::endl;
     std::cout << "Drone Pos(x, y, z): " << vec_to_drone << std::endl;
 
     return std::array<Length, 2>{0.0_mm, 0.0_mm};

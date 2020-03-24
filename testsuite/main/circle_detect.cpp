@@ -18,10 +18,13 @@ int main(int argc, char* argv[])
 
     while (true) {
         auto [rgb, ir, depth] = Kinect::getImages();
+        cv::Mat depth_normalized, psuedo_color;
+        depth.convertTo(depth_normalized, CV_8UC1, 65535.0f / 8000.0f * 255);
+        cv::applyColorMap(depth_normalized, psuedo_color, cv::COLORMAP_AUTUMN);
 
         //cv::imshow("rgb", rgb);
         //cv::imshow("ir", ir);
-        cv::imshow("depth", depth);
+        cv::imshow("psuedo colored depth", psuedo_color);
 
         auto [r, t] = Control::Localization::get2Dpos(rgb, depth, 0);
 

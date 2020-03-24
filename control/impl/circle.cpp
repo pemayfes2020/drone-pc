@@ -62,7 +62,6 @@ std::pair<int, int> detectCircle(cv::Mat image, int show)
         double S = cv::contourArea(contours[i]);
         double circle_label = 4 * M_PI * S / (L * L);
 
-        circle(image, center[i], (int)radius[i], cv::Scalar(0, 0, 255), 2, 8, 0);
 
         /*if(circle_label > 0.47  && radius[i] > 8.0){
                 circle(image, center[i], (int)radius[i], cv::Scalar(0, 0, 255), 2, 8, 0 );
@@ -76,11 +75,11 @@ std::pair<int, int> detectCircle(cv::Mat image, int show)
         }
     }
 
-    if (show) {
-        cv::imshow("kineImg", image);
-    }
-
     if (center.size()) {
+        if (show) {
+            circle(image, center[circle_ind], (int)radius[circle_ind], cv::Scalar(0, 0, 255), 2, 8, 0);
+            cv::imshow("kineImg", image);
+        }
         return {center[circle_ind].x, center[circle_ind].y};
     } else {
         return {0, 0};
