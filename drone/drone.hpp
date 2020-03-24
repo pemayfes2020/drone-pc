@@ -9,7 +9,7 @@ namespace Drone
 
 void start(const std::string socket_path);
 
-void command(Common::Drone::SendData send_data);
+void send(Common::Drone::SendData send_data);
 
 Common::Drone::ReceiveData read();
 
