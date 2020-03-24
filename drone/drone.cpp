@@ -27,19 +27,20 @@ void start(const std::string socket_path)
 
                 while (!ThreadRoom::toExit()) {
                     {
-                        std::lock_guard<std::mutex> lock{mutex_receive};
-                        receive_data = std::make_optional(
-                            client.read<Common::Drone::ReceiveData>());
-                        cond_receive.notify_one();
-                    }
-                    {
                         std::unique_lock<std::mutex> lock{mutex_send};
-                        while (!send_data) {
+                        while (!send_data || ThreadRoom::toExit()) {
                             cond_send.wait(lock);
                         }
                         client.write<Common::Drone::SendData>(
                             send_data.value());
                         send_data = std::nullopt;
+                    }
+                    ThreadRoom::toExit();
+                    {
+                        std::lock_guard<std::mutex> lock{mutex_receive};
+                        receive_data = std::make_optional(
+                            client.read<Common::Drone::ReceiveData>());
+                        cond_receive.notify_one();
                     }
                 }
 
@@ -61,10 +62,12 @@ void send(Common::Drone::SendData _send_data)
 Common::Drone::ReceiveData read()
 {
     std::unique_lock<std::mutex> lock{mutex_receive};
-    while (!receive_data) {
+    while (!receive_data || ThreadRoom::toExit()) {
         cond_receive.wait(lock);
     }
-    return receive_data.value();
+    auto tmp = receive_data.value();
+    receive_data = std::nullopt;
+    return tmp;
 }
 
 }  // namespace Drone
