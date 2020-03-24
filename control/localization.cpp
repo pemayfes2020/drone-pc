@@ -32,6 +32,7 @@ namespace Control
 
 namespace Localization
 {
+
 double bilinear(cv::Mat depth, int x_rgb, int y_rgb)
 {
     double x = x_rgb * width_ratio;
@@ -58,7 +59,7 @@ double bilinear(cv::Mat depth, int x_rgb, int y_rgb)
     return A * B * C;
 }
 
-std::array<Length, 2> get2Dpos(cv::Mat image_rgb, cv::Mat image_depth, Length z)
+std::array<Length, 2> get2Dpos(cv::Mat image_rgb, cv::Mat image_depth, Length z, depst& depth)
 {
     // TODO RGB画像とDepth画像、既知のzからxy平面内の座標を推定する
 
@@ -72,17 +73,26 @@ std::array<Length, 2> get2Dpos(cv::Mat image_rgb, cv::Mat image_depth, Length z)
     double theta = vertical * (y - center_y) / height;
     double phi = horizontal * (x - center_x) / width;
 
-    double depth = bilinear(image_depth, x, y);  //中心8近傍の平均?
+    double _depth = bilinear(image_depth, x, y);  //中心8近傍の平均?
 
     Eigen::Vector3d angle{
         1.0,
         -tan(phi),
         -tan(theta) / cos(phi)};
 
-    Eigen::Vector3d vec_to_drone = depth * angle + kinect_r;
 
-    std::cout << "depth: " << depth << std::endl;
-    std::cout << "Drone Pos(x, y, z): " << vec_to_drone << std::endl;
+    if (_depth) {
+        depth.val = _depth;
+        depth.rel = 1;
+    } else {
+        depth.rel = 0;
+    }
+
+    Eigen::Vector3d vec_to_drone = depth.val * angle + kinect_r;
+
+    std::cout << "depth: " << depth.val << std::endl;
+    std::cout << "Drone Pos(x, y, z): " << std::endl
+              << vec_to_drone << std::endl;
 
     return std::array<Length, 2>{0.0_mm, 0.0_mm};
 }

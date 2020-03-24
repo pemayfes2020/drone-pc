@@ -16,6 +16,8 @@ int main(int argc, char* argv[])
 
     Kinect::start();
 
+    auto _depth = Control::Localization::depst{1.0, 0};
+
     while (true) {
         auto [rgb, ir, depth] = Kinect::getImages();
         cv::Mat depth_normalized, psuedo_color;
@@ -26,7 +28,12 @@ int main(int argc, char* argv[])
         //cv::imshow("ir", ir);
         cv::imshow("psuedo colored depth", psuedo_color);
 
-        auto [r, t] = Control::Localization::get2Dpos(rgb, depth, 0);
+        auto [r, t] = Control::Localization::get2Dpos(rgb, depth, 0, _depth);
+        if (_depth.rel) {
+            std::cout << "ちゃんとdepth取れてるで自分" << std::endl;
+        } else {
+            std::cout << "depth = 0やで" << std::endl;
+        }
 
         cv::waitKey(1);
     }
