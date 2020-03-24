@@ -52,7 +52,8 @@ int main()
     while (ardrone.update()) {
         // Receive Command from main
         Drone::SendData message;
-        if (not connected) {
+        if (!connected) {
+            std::cout << "first data" << std::endl;
             message = server.read<Drone::SendData>();
             connected = true;
         } else {
@@ -60,14 +61,17 @@ int main()
             volatile std::atomic end_flag = false;
             std::thread thread_read{
                 [&server, &end_flag](Drone::SendData& ref) {
+                    std::cout << "reading continued data" << std::endl;
                     ref = server.read<Drone::SendData>();
                     end_flag = true;
                 },
                 std::ref(message)};
 
             auto start = std::chrono::system_clock::now();
+            std::cout << "waiting for the timeout" << std::endl;
             while (!end_flag or timeout(start)) {
             }
+            std::cout << "ended or timeout" << std::endl;
             if (!end_flag) {
                 ardrone.landing();
                 std::exit(EXIT_FAILURE);
