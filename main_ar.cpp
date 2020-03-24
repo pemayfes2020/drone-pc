@@ -7,6 +7,7 @@
 #include <opencv/cv.hpp>
 
 #include <atomic>
+#include <chrono>
 #include <iostream>
 #include <thread>
 
@@ -27,6 +28,12 @@ void init(ARDrone& ardrone)
 
 using namespace Common;
 
+constexpr int timeout_deadline = 1500;
+bool timeout(std::chrono::system_clock::time_point start)
+{
+    return std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - start).count() < timeout_deadline;
+}
+
 void command(ARDrone& ardrone, Drone::SendData message);
 
 int main()
@@ -36,13 +43,37 @@ int main()
     ARDrone ardrone;
     init(ardrone);
 
+    bool connected = false;  // timeoutは2回目以降にかける
+
     cv::Mat image;
     constexpr int front_camera = 0, lower_camera = 1;
     ardrone.setCamera(lower_camera);
 
     while (ardrone.update()) {
         // Receive Command from main
-        auto message = server.read<Drone::SendData>();
+        Drone::SendData message;
+        if (not connected) {
+            message = server.read<Drone::SendData>();
+            connected = true;
+        } else {
+            // timeout処理
+            volatile std::atomic end_flag = false;
+            std::thread thread_read{
+                [&server, &end_flag](Drone::SendData& ref) {
+                    ref = server.read<Drone::SendData>();
+                    end_flag = true;
+                },
+                std::ref(message)};
+
+            auto start = std::chrono::system_clock::now();
+            while (!end_flag or timeout(start)) {
+            }
+            if (!end_flag) {
+                ardrone.landing();
+                std::exit(EXIT_FAILURE);
+            }
+            thread_read.join();
+        }
         command(ardrone, message);
 
         // Get Sensor Data
