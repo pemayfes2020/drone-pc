@@ -4,6 +4,7 @@
 #include "localization.hpp"
 #include "message_types.hpp"
 #include "safe_exit.hpp"
+#include "socket.hpp"
 
 #include <opencv/cv.hpp>
 
@@ -19,6 +20,8 @@ int main()
 
     Kinect::start();
 
+    UnixSocket::Client visualizer("/tmp/visualizer.sock");
+
     Vel zero_vel = 0.0_mm / 1.0_s;
     Drone::send(Common::Drone::SendData{zero_vel, zero_vel, zero_vel, zero_vel, Common::Drone::Command::TAKEOFF});
 
@@ -27,6 +30,8 @@ int main()
 
         auto [roll, pitch, yaw, z, vx, vy, vz] = Drone::read().attachUnit();
         std::cout << roll << ' ' << pitch << ' ' << yaw << std::endl;
+
+        visualizer.write<Common::Visualizer::VectorData>(Common::Visualizer::VectorData{0.0_mm, 0.0_mm, 0.0_mm, roll, pitch, yaw});
 
         Drone::send(Common::Drone::SendData{zero_vel, zero_vel, zero_vel, zero_vel, Common::Drone::Command::VELOCITY});
     }

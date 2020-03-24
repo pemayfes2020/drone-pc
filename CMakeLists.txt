@@ -60,11 +60,15 @@ set(VISUALIZER_INCLUDE_DIRS
     ${OPENGL_INCLUDE_DIR}
     ${GLUT_INCLUDE_DIR}
     ${EIGEN3_INCLUDE_DIRS}
-    visualizer common)
+    visualizer common basic)
 
 set(VISUALIZER_LINK_LIBRARIES
     ${OPENGL_LIBRARIES}
-    ${GLUT_LIBRARY})
+    ${GLUT_LIBRARY}
+    ${Boost_LIBRARY_DIRS}
+    ${Boost_FILESYSTEM_LIBRARY}
+    ${Boost_SYSTEM_LIBRARY}
+    pthread)
 
 # make static library from cvdrone sources
 file(GLOB CVDRONE_SOURCES ${EXTERNAL_DIR}/cvdrones/src/ardrone/*.cpp)
@@ -100,7 +104,7 @@ target_link_libraries(ar ${AR_LINK_LIBRARIES} cvdrones)
 
 # set visualizer executable
 file(GLOB VISUALIZER_SOURCES main_viz.cpp)
-file(GLOB VISUALIZER_MODULE_SOURCES visualizer/*.cpp)
+file(GLOB VISUALIZER_MODULE_SOURCES visualizer/*.cpp basic.cpp)
 
 add_executable(visualizer ${VISUALIZER_SOURCES} ${VISUALIZER_MODULE_SOURCES})
 

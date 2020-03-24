@@ -1,8 +1,13 @@
 #include "graphic.hpp"
+#include "message_types_viz.hpp"
+#include "socket.hpp"
 
 #include <Eigen/Core>
 
+#include <atomic>
 #include <cmath>
+#include <csignal>
+#include <thread>
 
 Eigen::Vector3f pos;
 Eigen::Vector3f rot;
@@ -16,8 +21,27 @@ void callback(std::vector<Graphic::Object>& objs)
     drone.shape->rotation = rot;
 }
 
+std::atomic_bool exit_flag = false;
+void sigint_handler(int)
+{
+    exit_flag = true;
+}
+
+void communication()
+{
+    UnixSocket::Server server("/tmp/visualizer.sock");
+
+    while (exit_flag) {
+        auto data = server.read<Common::Visualizer::VectorData>();
+        pos << data.x, data.y, data.z;
+        rot << data.roll, data.pitch, data.yaw;
+    }
+}
+
 int main(int argc, char** argv)
 {
+    signal(SIGINT, sigint_handler);
+
     Graphic::init(argc, argv);
 
     Graphic::setWindowSize(800, 800);
@@ -28,7 +52,10 @@ int main(int argc, char** argv)
 
     drone = Graphic::addSTLModel(pos, rot, "../resource/ardrone.stl", Color{1.0, 1.0, 0.0});
 
+    std::thread comm_thread{communication};
     Graphic::start(callback);
+
+    comm_thread.join();
 
     return 0;
 }
