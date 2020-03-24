@@ -21,6 +21,7 @@ constexpr double height_ratio = (double)height_depth / height;
 constexpr double horizontal = 84.1 * M_PI / 180.0;
 constexpr double vertical = 53.8 * M_PI / 180.0;
 
+
 Eigen::Matrix<double, 3, 1> kinect_r = {0, 0, 0};
 
 //参考
@@ -40,22 +41,21 @@ double bilinear(cv::Mat depth, int x_rgb, int y_rgb)
     double _x = std::floor(x);
     double _y = std::floor(y);
 
-    using dep = depth.at<float>;
     Eigen::Matrix<double, 1, 2> A;
     Eigen::Matrix2d B;
     Eigen::Vector2d C;
     A << _y + 1 - y, y - _y;
-    try{
-        B << dep(_x, _y), dep(_x + 1, _y),
-        dep(_x, _y + 1), dep(_x + 1, _y);
-    } catch(...) {
+    try {
+        B << depth.at<float>(_x, _y), depth.at<float>(_x + 1, _y),
+            depth.at<float>(_x, _y + 1), depth.at<float>(_x + 1, _y);
+    } catch (...) {
         std::cerr << "out of bound error" << std::endl;
         std::exit(EXIT_FAILURE);
     }
 
-        C << _x + 1 - x, x - _x;
+    C << _x + 1 - x, x - _x;
 
-        return A * B * C;
+    return A * B * C;
 }
 
 std::array<Length, 2> get2Dpos(cv::Mat image_rgb, cv::Mat image_depth, Length z)
