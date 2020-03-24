@@ -31,18 +31,22 @@ namespace Localization
 {
 double bilinear(cv::Mat depth, int x_rgb, int y_rgb)
 {
+    //補間https://imagingsolution.blog.fc2.com/blog-entry-142.html
+
     double x = x_rgb * width_depth / double(width);
     double y = y_rgb * height_depth / double(height);
 
     double _x = std::floor(x);
     double _y = std::floor(y);
 
+    using dep = depth.at<float>;
+
     Eigen::Matrix<double, 1, 2> A;
     Eigen::Matrix2d B;
     Eigen::Vector2d C;
     A << _y + 1 - y, y - _y;
-    B << depth.at<float>(_x, _y), depth.at<float>(_x + 1, _y),
-        depth.at<float>(_x, _y + 1), depth.at<float>(_x + 1, _y);
+    B << dep(_x, _y), dep(_x + 1, _y),
+        dep(_x, _y + 1), dep(_x + 1, _y + 1);
 
     C << _x + 1 - x, x - _x;
 
