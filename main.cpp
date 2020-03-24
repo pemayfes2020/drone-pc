@@ -14,7 +14,7 @@ int main()
 
     ESP32::start("/dev/rfcomm0");
 
-    Drone::start();
+    Drone::start("/tmp/ar.sock");
 
     Kinect::start();
 

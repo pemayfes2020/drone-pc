@@ -1,31 +1,24 @@
-#include "drone.hpp"
+#include "message_types.hpp"
 #include "safe_exit.hpp"
+#include "socket.hpp"
 
-#include <memory>
+#include <optional>
 #include <thread>
 
 namespace Drone
 {
 
 
-class Drone
-{
-private:
-public:
-    Drone()
-    {
-    }
-    ~Drone()
-    {
-    }
-};
+std::optional<Common::Drone::SendData> send_data;
+std::optional<Common::Drone::ReceiveData> receive_data;
 
-void start()
+void start(const std::string socket_path)
 {
     std::thread{
-        []() {
+        [&socket_path, &send_data, &receive_data]() {
             try {
                 ThreadRoom::enter();
+                UnixSocket::Client client(socket_path);
 
                 while (!ThreadRoom::toExit()) {
                 }
@@ -36,6 +29,10 @@ void start()
             }
         }}
         .detach();
+}
+
+void command()
+{
 }
 
 }  // namespace Drone

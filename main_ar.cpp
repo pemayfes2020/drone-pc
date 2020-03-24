@@ -1,7 +1,10 @@
 #include "message_types.hpp"
+#include "socket.hpp"
 #include "unit.hpp"
 
 #include <ardrone/ardrone.h>
+
+#include <opencv/cv.hpp>
 
 #include <atomic>
 #include <iostream>
@@ -22,79 +25,58 @@ void init(ARDrone& ardrone)
     std::cout << "[Info] [Drone] Battery: " << ardrone.getBatteryPercentage() << "[%]" << std::endl;
 }
 
+using namespace Common;
+
+void command(ARDrone& ardrone, Drone::SendData message);
+
 int main()
 {
+    UnixSocket::Server server{"/tmp/ar.sock"};
+
     ARDrone ardrone;
     init(ardrone);
 
-    std::atomic_bool exit_flag = false;
-    std::thread interprocess{[&exit_flag] { while(!exit_flag){} }};
+    cv::Mat image;
+    constexpr int front_camera = 0, lower_camera = 1;
+    ardrone.setCamera(lower_camera);
 
     while (ardrone.update()) {
-        Angular roll = ardrone.getRoll() * 1.0_rad;
-        Angular pitch = ardrone.getPitch() * 1.0_rad;
-        Angular yaw = ardrone.getYaw() * 1.0_rad;
+        // Receive Command from main
+        auto message = server.read<Drone::SendData>();
+        command(ardrone, message);
+
+        // Get Sensor Data
+        Angular roll = ardrone.getRoll() * 1.0_rad,
+                pitch = ardrone.getPitch() * 1.0_rad,
+                yaw = ardrone.getYaw() * 1.0_rad;
         Length z = ardrone.getAltitude() * 1.0_m;
         double _vx, _vy, _vz;
         ardrone.getVelocity(&_vx, &_vy, &_vz);
         Vel vx = _vx * 1.0_m / 1.0_s,
             vy = _vx * 1.0_m / 1.0_s,
             vz = _vx * 1.0_m / 1.0_s;
+        ardrone >> image;
+
+        // Send Sensor Data to main
+        server.write<Drone::ReceiveData>(Drone::ReceiveData{roll, pitch, yaw, z, vx, vy, vz});
     }
 
     ardrone.close();
-    exit_flag = true;
-    interprocess.join();
 
     return 0;
 }
-/*
-class ARDrone
+
+void command(ARDrone& ardrone, Drone::SendData message)
 {
-public:
-    // Get an image
-    virtual ARDRONE_IMAGE getImage(void);
-    virtual ARDrone& operator>>(cv::Mat& image);
-    virtual bool willGetNewImage(void);
-
-    // Get AR.Drone's firmware version
-    virtual int getVersion(int* major = NULL, int* minor = NULL, int* revision = NULL);
-
-    // Get sensor values
-    virtual double getRoll(void);                                                                          // Roll angle  [rad]
-    virtual double getPitch(void);                                                                         // Pitch angle [rad]
-    virtual double getYaw(void);                                                                           // Yaw angle   [rad]
-    virtual double getAltitude(void);                                                                      // Altitude    [m]
-    virtual double getVelocity(double* vx = NULL, double* vy = NULL, double* vz = NULL);                   // Velocity [m/s]
-    virtual int getPosition(double* latitude = NULL, double* longitude = NULL, double* elevation = NULL);  // GPS (only for AR.Drone 2.0)
-
-    // Battery charge [%]
-    virtual int getBatteryPercentage(void);
-
-    // Take off / Landing / Emergency
-    virtual void takeoff(void);
-    virtual void landing(void);
-    virtual void emergency(void);
-
-    // Move with velocity [m/s]
-    virtual void move(double vx, double vy, double vr);
-    virtual void move3D(double vx, double vy, double vz, double vr);
-
-    // Change camera channel
-    virtual void setCamera(int channel);
-
-    // Animation
-    virtual void setAnimation(int id, int duration = 0);              // Flight animation
-    virtual void setLED(int id, float freq = 0.0, int duration = 0);  // LED animation
-
-    // Calibration
-    virtual void setFlatTrim(void);               // Flat trim
-    virtual void setCalibration(int device = 0);  // Magnetometer calibration
-
-    // Others
-    virtual int onGround(void);                  // Check on ground
-    virtual void setVideoRecord(bool activate);  // Video recording (only for AR.Drone 2.0)
-    virtual void setOutdoorMode(bool activate);  // Outdoor mode (experimental)
-};
-
-*/
+    switch (message.command) {
+    case Drone::Command::TAKEOFF:
+        ardrone.takeoff();
+        break;
+    case Drone::Command::LANDING:
+        ardrone.landing();
+        break;
+    case Drone::Command::VELOCITY:
+        ardrone.move3D(message.vx, message.vy, message.vz, message.vr);
+        break;
+    }
+}
