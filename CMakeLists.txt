@@ -27,13 +27,14 @@ find_package(GLUT REQUIRED)
 
 include_directories(
     ${OpenCV_INCLUDE_DIRS}
+    ${EXTERNAL_DIR}/cmdline
     )
 
 set(MAIN_INCLUDE_DIRS
     ${freenect2_INCLUDE_DIRS}
     ${EIGEN3_INCLUDE_DIRS}
     ${Boost_INCLUDE_DIRS}
-    kinect esp32 control control/impl drone basic params common
+    kinect esp32 control drone basic params common control/impl
     )
 
 set(MAIN_LINK_LIBRARIES
@@ -41,33 +42,34 @@ set(MAIN_LINK_LIBRARIES
     ${OpenCV_LIBRARIES}
     ${Boost_LIBRARY_DIRS}
     ${Boost_FILESYSTEM_LIBRARY}
-    ${Boost_SYSTEM_LIBRARY})
+    ${Boost_SYSTEM_LIBRARY}
+    )
 
 set(AR_INCLUDE_DIRS
     ${OpenCV_INCLUDE_DIRS}
     ${Boost_INCLUDE_DIRS}
-    basic ar common
-    ${EXTERNAL_DIR}/cvdrones/src/
-    )
+    basic common
+    ${EXTERNAL_DIR}/cvdrones/src)
 
 set(AR_LINK_LIBRARIES
     ${Boost_LIBRARY_DIRS}
     ${Boost_FILESYSTEM_LIBRARY}
     ${Boost_SYSTEM_LIBRARY}
-    pthread
-    )
+    pthread)
 
 set(VISUALIZER_INCLUDE_DIRS
     ${OPENGL_INCLUDE_DIR}
     ${GLUT_INCLUDE_DIR}
     ${EIGEN3_INCLUDE_DIRS}
-    basic visualizer common
-    )
+    visualizer common basic)
 
 set(VISUALIZER_LINK_LIBRARIES
     ${OPENGL_LIBRARIES}
     ${GLUT_LIBRARY}
-    )
+    ${Boost_LIBRARY_DIRS}
+    ${Boost_FILESYSTEM_LIBRARY}
+    ${Boost_SYSTEM_LIBRARY}
+    pthread)
 
 # make static library from cvdrone sources
 file(GLOB CVDRONE_SOURCES ${EXTERNAL_DIR}/cvdrones/src/ardrone/*.cpp)
@@ -85,7 +87,7 @@ target_link_libraries(cvdrones
 
 # set main executable
 file(GLOB MAIN_SOURCES main.cpp)
-file(GLOB MAIN_MODULE_SOURCES kinect/*.cpp esp32/*.cpp control/*.cpp control/impl/*.cpp drone/*.cpp basic/*.cpp circle/*.cpp)
+file(GLOB MAIN_MODULE_SOURCES kinect/*.cpp esp32/*.cpp control/*.cpp drone/*.cpp basic/*.cpp control/impl/*.cpp)
 
 add_executable(main ${MAIN_SOURCES} ${MAIN_MODULE_SOURCES})
 
@@ -94,7 +96,7 @@ target_link_libraries(main ${MAIN_LINK_LIBRARIES})
 
 # set ar executable
 file(GLOB AR_SOURCES main_ar.cpp)
-file(GLOB AR_MODULE_SOURCES ar/*.cpp basic/*.cpp)
+file(GLOB AR_MODULE_SOURCES basic/*.cpp)
 
 add_executable(ar ${AR_SOURCES} ${AR_MODULE_SOURCES})
 
@@ -103,7 +105,7 @@ target_link_libraries(ar ${AR_LINK_LIBRARIES} cvdrones)
 
 # set visualizer executable
 file(GLOB VISUALIZER_SOURCES main_viz.cpp)
-file(GLOB VISUALIZER_MODULE_SOURCES visualizer/*.cpp)
+file(GLOB VISUALIZER_MODULE_SOURCES visualizer/*.cpp basic.cpp)
 
 add_executable(visualizer ${VISUALIZER_SOURCES} ${VISUALIZER_MODULE_SOURCES})
 
@@ -144,7 +146,7 @@ foreach(TEST_SOURCE ${VISUALIZER_TEST_SOURCES})
     get_filename_component(TEST_NAME ${TEST_SOURCE} NAME_WE)
     message(${TEST_NAME})
 
-    add_executable(${TEST_NAME} ${TEST_SOURCE} ${AR_MODULE_SOURCES})
+    add_executable(${TEST_NAME} ${TEST_SOURCE} ${VISUALIZER_MODULE_SOURCES})
     target_include_directories(${TEST_NAME} PRIVATE ${VISUALIZER_INCLUDE_DIRS} )
     target_link_libraries(${TEST_NAME}
         ${VISUALIZER_LINK_LIBRARIES}

@@ -1,17 +1,20 @@
-#include "socket_client.hpp"
+#include "socket.hpp"
 
 #include <iostream>
 
+struct DataType {
+    int32_t x;
+    int32_t y;
+    int32_t z;
+};
+
 int main()
 {
-    UnixSocketClient::init("/tmp/ar.sock");
+    UnixSocket::Client client("/tmp/ar.sock");
 
-    while (true) {
-        std::cout << UnixSocketClient::read() << std::endl;
-        std::string hoge;
-        std::cin >> hoge;
-        UnixSocketClient::write(hoge);
-    }
+    auto data = client.read<DataType>();
+    std::cout << data.x << ' ' << data.y << ' ' << data.z << std::endl;
+    client.write<DataType>(DataType{1, 2, 3});
 
     return 0;
 }
