@@ -118,7 +118,7 @@ foreach(MAKE_TARGET MAIN AR VISUALIZER)
     target_link_libraries(${MAKE_TARGET_LOWER} ${${MAKE_TARGET}_LINK_LIBRARIES})
 
     # set test executables
-    file(${MAKE_TARGET}_TEST_SOURCES testsuite/${MAKE_TARGET_LOWER}/*.cpp)
+    file(GLOB ${MAKE_TARGET}_TEST_SOURCES testsuite/${MAKE_TARGET_LOWER}/*.cpp)
     foreach(TEST_SOURCE ${${MAKE_TARGET}_TEST_SOURCES})
         get_filename_component(TEST_NAME ${TEST_SOURCE} NAME_WE)
 

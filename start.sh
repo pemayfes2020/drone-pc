@@ -18,6 +18,6 @@ fi
 mkdir -p log
 TS=$(date "+%Y%m%d-%H%M%S")
 
-./build/ar --sock=$AR_SOCKET -  > log/$TS.txt &
-./build/visualizer --sock=$VIZ_SOCKET > log/$TS.txt &
-./build/main --esp32=$ESP32_PORT --sock-viz=$AR_SOCKET --sock-ar=$VIZ_SOCKET > log/$TS.txt &
+${PROJECT_DIR}/build/ar --sock=$AR_SOCKET -  > log/$TS.txt &
+${PROJECT_DIR}/build/visualizer --sock=$VIZ_SOCKET > log/$TS.txt &
+${PROJECT_DIR}/build/main --btport=$ESP32_PORT --sock-viz=$AR_SOCKET --sock-ar=$VIZ_SOCKET > log/$TS.txt &

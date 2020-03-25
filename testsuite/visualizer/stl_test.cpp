@@ -1,4 +1,4 @@
-#include "graphic.hpp"
+#include "graphic/graphic.hpp"
 
 #include <Eigen/Core>
 

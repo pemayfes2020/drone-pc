@@ -1,6 +1,7 @@
-#include "circle.hpp"
-#include "kinect.hpp"
-#include "localization.hpp"
+#include "control/impl/circle_detection.hpp"
+#include "control/localization.hpp"
+#include "kinect/kinect.hpp"
+
 #include "safe_exit.hpp"
 
 #include <opencv/cv.hpp>
