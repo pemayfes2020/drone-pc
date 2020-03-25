@@ -31,7 +31,7 @@ using namespace Common;
 constexpr int timeout_deadline = 1500;
 bool timeout(std::chrono::system_clock::time_point start)
 {
-    return std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - start).count() < timeout_deadline;
+    return std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - start).count() > timeout_deadline;
 }
 
 void command(ARDrone& ardrone, Drone::SendData message);
@@ -53,7 +53,6 @@ int main()
         // Receive Command from main
         Drone::SendData message;
         if (!connected) {
-            std::cout << "first data" << std::endl;
             message = server.read<Drone::SendData>();
             connected = true;
         } else {
@@ -61,17 +60,14 @@ int main()
             volatile std::atomic end_flag = false;
             std::thread thread_read{
                 [&server, &end_flag](Drone::SendData& ref) {
-                    std::cout << "reading continued data" << std::endl;
                     ref = server.read<Drone::SendData>();
                     end_flag = true;
                 },
                 std::ref(message)};
 
             auto start = std::chrono::system_clock::now();
-            std::cout << "waiting for the timeout" << std::endl;
-            while (!end_flag or timeout(start)) {
+            while (!end_flag && !timeout(start)) {
             }
-            std::cout << "ended or timeout" << std::endl;
             if (!end_flag) {
                 ardrone.landing();
                 std::exit(EXIT_FAILURE);

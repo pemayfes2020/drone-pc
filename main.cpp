@@ -14,7 +14,7 @@ int main()
 {
     ThreadRoom::setExitHandler();
 
-    //ESP32::start("/dev/rfcomm0");
+    ESP32::start("/dev/rfcomm0");
 
     Drone::start("/tmp/ar.sock");
 
@@ -27,7 +27,6 @@ int main()
 
     visualizer.write<Common::Visualizer::VectorData>(
         Common::Visualizer::VectorData{0.0_mm, 0.0_mm, 0.0_mm, 0.0_rad, 0.0_rad, 0.0_rad});
-
 
 
     while (true) {
