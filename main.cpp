@@ -1,12 +1,13 @@
-#include "cmdline.h"
-#include "drone.hpp"
-#include "esp32.hpp"
-#include "kinect.hpp"
-#include "localization.hpp"
+#include "control/localization.hpp"
+#include "drone/drone.hpp"
+#include "esp32/esp32.hpp"
+#include "kinect/kinect.hpp"
+
 #include "message_types.hpp"
 #include "safe_exit.hpp"
 #include "socket.hpp"
 
+#include <cmdline.h>
 #include <opencv/cv.hpp>
 
 #include <iostream>

@@ -1,5 +1,6 @@
-#include "kinect.hpp"
-#include "logger.hpp"
+#include "kinect/kinect.hpp"
+#include "kinect/logger.hpp"
+
 #include "safe_exit.hpp"
 
 #include <atomic>

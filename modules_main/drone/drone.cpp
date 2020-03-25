@@ -1,3 +1,5 @@
+#include "drone/drone.hpp"
+
 #include "message_types.hpp"
 #include "safe_exit.hpp"
 #include "socket.hpp"

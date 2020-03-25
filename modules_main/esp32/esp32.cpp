@@ -1,3 +1,5 @@
+#include "esp32.hpp"
+
 #include <boost/asio.hpp>
 
 #include <chrono>

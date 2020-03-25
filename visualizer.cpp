@@ -1,9 +1,9 @@
-#include "cmdline.h"
-#include "graphic.hpp"
+#include "graphic/graphic.hpp"
 #include "message_types_viz.hpp"
 #include "socket.hpp"
 
 #include <Eigen/Core>
+#include <cmdline.h>
 
 #include <atomic>
 #include <cmath>
@@ -33,6 +33,7 @@ int main(int argc, char** argv)
 {
     cmdline::parser parser;
     parser.add<std::string>("socket", 's', "unix domain socket", false, "/tmp/viz.sock");
+    parser.add<std::string>("model", 'm', "Drone STL Model File", false, "../resource/ardrone.stl");
 
     signal(SIGINT, sigint_handler);
 
@@ -57,7 +58,7 @@ int main(int argc, char** argv)
     pos << 0.0f, 0.0f, 0.0f;
     rot << 0.0f, 0.0f, 0.0f;
 
-    drone = Graphic::addSTLModel(pos, rot, "../resource/ardrone.stl", Color{1.0, 1.0, 0.0});
+    drone = Graphic::addSTLModel(pos, rot, parser.get<std::string>("model"), Color{1.0, 1.0, 0.0});
 
     Graphic::start(callback);
 

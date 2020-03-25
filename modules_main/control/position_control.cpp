@@ -1,6 +1,5 @@
+#include "params/control_params.hpp"
 #include "unit.hpp"
-
-#include "control_params.hpp"
 
 #include <Eigen/Core>
 

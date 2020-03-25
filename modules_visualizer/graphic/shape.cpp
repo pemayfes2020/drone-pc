@@ -2,12 +2,11 @@
 #pragma push
 #pragma GCC diagnostic ignored "-Wnarrowing"
 
-#include "shape.hpp"
-#include "stl.hpp"
-
-#include <GL/glut.h>
+#include "graphic/shape.hpp"
+#include "graphic/stl.hpp"
 
 #include <Eigen/Core>
+#include <GL/glut.h>
 
 #include <iostream>
 

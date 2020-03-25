@@ -1,6 +1,9 @@
+PROJECT_DIR=$(pwd)
+
 AR_SOCKET=/tmp/ar.sock
 VIZ_SOCKET=/tmp/viz.sock
 ESP32_PORT=/dev/rfcomm0
+DRONE_STL_FILE=$PROJECT_DIR/resource/ardrone.stl
 
 unlink $AR_SOCKET
 unlink $VIZ_SOCKET
@@ -11,7 +14,6 @@ else
     exit -1
 fi
 
-PROJECT_DIR=$(pwd)
 
 mkdir -p log
 TS=$(date "+%Y%m%d-%H%M%S")

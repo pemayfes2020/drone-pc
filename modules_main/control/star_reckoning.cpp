@@ -1,7 +1,10 @@
-#include "localization.hpp"
-#include "circle.hpp"
+#include "control/impl/circle_detection.hpp"
+#include "control/localization.hpp"
+
 #include <Eigen/Core>
+
 #include <iostream>
+
 //rgb画像の大きさ
 constexpr int width = 1920;
 constexpr int height = 1080;
@@ -64,16 +67,16 @@ std::array<Length, 2> get2Dpos(cv::Mat image_rgb, cv::Mat image_depth, Length z,
     // TODO RGB画像とDepth画像、既知のzからxy平面内の座標を推定する
 
     //impl/circle.cpp内のdetectCircleから検出した円のkinect画面内座標を受け取る。
-    auto [x, y] = circleSpace::detectCircle(image_rgb, 1);
+    Eigen::Vector2i circle_pos = StarReckoning::detectCircle(image_rgb, 1);
 
     //中心
     int center_x = (width - 1) / 2;
     int center_y = (height - 1) / 2;
 
-    double theta = vertical * (y - center_y) / height;
-    double phi = horizontal * (x - center_x) / width;
+    double theta = vertical * (circle_pos(1) - center_y) / height;
+    double phi = horizontal * (circle_pos(0) - center_x) / width;
 
-    double _depth = bilinear(image_depth, x, y);  //中心8近傍の平均?
+    double _depth = bilinear(image_depth, circle_pos(0), circle_pos(1));  //中心8近傍の平均?
 
     Eigen::Vector3d angle{
         1.0,

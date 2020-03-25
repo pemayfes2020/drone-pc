@@ -1,6 +1,6 @@
 #define GL_SILENCE_DEPRECATION
 
-#include "graphic.hpp"
+#include "graphic/graphic.hpp"
 
 #include <GL/glut.h>
 
