@@ -9,6 +9,7 @@
 
 #include <atomic>
 #include <chrono>
+#include <cmath>
 #include <iostream>
 #include <string>
 #include <thread>
@@ -97,8 +98,11 @@ int main(int argc, char** argv)
         //ardrone >> image;
         */
 
-        Angular roll = 1.0_rad, pitch = 1.0_rad, yaw = 1.0_rad;
-        Length z = 1.0_m;
+        static double t = 0.0;
+        Angular roll = 3.14 / 8.0 * std::sin(2.0 * 3.14 * t / 1.0) * 1.0_rad, pitch = 0.0_rad, yaw = 0.0_rad;
+        Length z = (2.0 + 1.0 * std::sin(2.0 * 3.14 * t / 2.0)) * 1.0_m;
+
+        t += 0.01;
 
         Vel vx = 1.0_m / 1.0_s,
             vy = 1.0_m / 1.0_s,

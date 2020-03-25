@@ -26,30 +26,29 @@ int main(int argc, char** argv)
 
     //ESP32::start(parser.get<std::string>("btport"));
 
-    Drone::start(parser.get<std::string>("sock-ar"));
-
     //Kinect::start();
 
-    //UnixSocket::Client visualizer(parser.get<std::string>("sock-viz"));
+    UnixSocket::Client drone(parser.get<std::string>("sock-ar"));
+
+    UnixSocket::Client visualizer(parser.get<std::string>("sock-viz"));
 
     Vel zero_vel = 0.0_mm / 1.0_s;
-    Drone::send(Common::Drone::SendData{zero_vel, zero_vel, zero_vel, zero_vel, Common::Drone::Command::TAKEOFF});
+    drone.write<Common::Drone::SendData>({zero_vel, zero_vel, zero_vel, zero_vel, Common::Drone::Command::TAKEOFF});
 
-    /*visualizer.write<Common::Visualizer::VectorData>(
+    visualizer.write<Common::Visualizer::VectorData>(
         Common::Visualizer::VectorData{0.0_mm, 0.0_mm, 0.0_mm, 0.0_rad, 0.0_rad, 0.0_rad});
-    */
+
 
     while (true) {
         //auto [rgb, ir, depth] = Kinect::getImages();
 
-        auto [roll, pitch, yaw, z, vx, vy, vz] = Drone::read().attachUnit();
+        auto [roll, pitch, yaw, z, vx, vy, vz] = drone.read<Common::Drone::ReceiveData>().attachUnit();
         std::cout << roll << ' ' << pitch << ' ' << yaw << std::endl;
 
-        /*visualizer.write<Common::Visualizer::VectorData>(
-            Common::Visualizer::VectorData{0.0_mm, 0.0_mm, 0.0_mm, roll, pitch, yaw});
-        */
+        visualizer.write<Common::Visualizer::VectorData>(
+            Common::Visualizer::VectorData{0.0_mm, 0.0_mm, z, roll, pitch, yaw});
 
-        Drone::send(Common::Drone::SendData{zero_vel, zero_vel, zero_vel, zero_vel, Common::Drone::Command::VELOCITY});
+        drone.write<Common::Drone::SendData>(Common::Drone::SendData{zero_vel, zero_vel, zero_vel, zero_vel, Common::Drone::Command::VELOCITY});
     }
 
     return 0;
