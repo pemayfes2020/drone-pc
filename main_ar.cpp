@@ -1,3 +1,4 @@
+#include "cmdline.h"
 #include "message_types_drone.hpp"
 #include "socket.hpp"
 #include "unit.hpp"
@@ -9,6 +10,7 @@
 #include <atomic>
 #include <chrono>
 #include <iostream>
+#include <string>
 #include <thread>
 
 void init(ARDrone& ardrone)
@@ -36,9 +38,13 @@ bool timeout(std::chrono::system_clock::time_point start)
 
 void command(ARDrone& ardrone, Drone::SendData message);
 
-int main()
+int main(int argc, char** argv)
 {
-    UnixSocket::Server server{"/tmp/ar.sock"};
+
+    cmdline::parser parser;
+    parser.add<std::string>("socket", 's', "unix domain socket", false, "/tmp/ar.sock");
+
+    UnixSocket::Server server{parser.get<std::string>("socket")};
 
     ARDrone ardrone;
     init(ardrone);

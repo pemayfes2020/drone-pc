@@ -1,3 +1,4 @@
+#include "cmdline.h"
 #include "graphic.hpp"
 #include "message_types_viz.hpp"
 #include "socket.hpp"
@@ -7,6 +8,7 @@
 #include <atomic>
 #include <cmath>
 #include <csignal>
+#include <string>
 #include <thread>
 
 Eigen::Vector3f pos;
@@ -29,9 +31,12 @@ void sigint_handler(int)
 
 int main(int argc, char** argv)
 {
+    cmdline::parser parser;
+    parser.add<std::string>("socket", 's', "unix domain socket", false, "/tmp/viz.sock");
+
     signal(SIGINT, sigint_handler);
 
-    UnixSocket::Server server("/tmp/viz.sock");
+    UnixSocket::Server server(parser.get<std::string>("socket"));
 
     std::thread comm_thread{
         [&exit_flag, &pos, &rot](UnixSocket::Server& server) {

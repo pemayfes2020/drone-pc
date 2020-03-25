@@ -27,6 +27,7 @@ find_package(GLUT REQUIRED)
 
 include_directories(
     ${OpenCV_INCLUDE_DIRS}
+    ${EXTERNAL_DIR}/cmdline
     )
 
 set(MAIN_INCLUDE_DIRS
