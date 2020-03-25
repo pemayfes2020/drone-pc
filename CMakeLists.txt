@@ -26,8 +26,6 @@ find_package(GLUT REQUIRED)
 set(BOOST_LIBRARIES
     boost_system boost_date_time)
 
-message(${BOOST_LIBRARIES})
-
 # make static library from cvdrone sources
 file(GLOB CVDRONE_SOURCES ${EXTERNAL_DIR}/cvdrones/src/ardrone/*.cpp)
 add_library(cvdrones STATIC ${CVDRONE_SOURCES})
@@ -120,9 +118,9 @@ foreach(MAKE_TARGET MAIN AR VISUALIZER)
     target_link_libraries(${MAKE_TARGET_LOWER} ${${MAKE_TARGET}_LINK_LIBRARIES})
 
     # set test executables
+    file(${MAKE_TARGET}_TEST_SOURCES testsuite/${MAKE_TARGET_LOWER}/*.cpp)
     foreach(TEST_SOURCE ${${MAKE_TARGET}_TEST_SOURCES})
         get_filename_component(TEST_NAME ${TEST_SOURCE} NAME_WE)
-        message(${TEST_NAME})
 
         add_executable(${TEST_NAME} ${TEST_SOURCE} ${${MAKE_TARGET}_MODULE_SOURCES})
         target_include_directories(${TEST_NAME} PRIVATE ${${MAKE_TARGET}_INCLUDE_DIRS} )
