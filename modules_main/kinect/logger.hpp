@@ -27,7 +27,7 @@ public:
         return logfile_.is_open() && logfile_.good();
     }
 
-    virtual void log(Level level, const std::string& message)
+    virtual void log(libfreenect2::Logger::Level level, const std::string& message) override
     {
         logfile_ << "[" << libfreenect2::Logger::level2str(level) << "] " << message << std::endl;
     }

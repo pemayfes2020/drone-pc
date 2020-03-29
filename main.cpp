@@ -1,5 +1,4 @@
 #include "control/localization.hpp"
-#include "drone/drone.hpp"
 #include "esp32/esp32.hpp"
 #include "kinect/kinect.hpp"
 

@@ -47,14 +47,14 @@ int main(int argc, char** argv)
 
     UnixSocket::Server server{parser.get<std::string>("socket")};
 
-    //ARDrone ardrone;
-    //init(ardrone);
+    ARDrone ardrone;
+    init(ardrone);
 
     bool connected = false;  // timeoutは2回目以降にかける
 
     cv::Mat image;
     constexpr int front_camera = 0, lower_camera = 1;
-    //ardrone.setCamera(lower_camera);
+    ardrone.setCamera(lower_camera);
 
     //while (ardrone.update()) {
     while (true) {
@@ -77,42 +77,30 @@ int main(int argc, char** argv)
             while (!end_flag && !timeout(start)) {
             }
             if (!end_flag) {
-                //ardrone.landing();
+                ardrone.landing();
                 std::exit(EXIT_FAILURE);
             }
             thread_read.join();
         }
-        //command(ardrone, message);
+        command(ardrone, message);
 
         // Get Sensor Data
-        /*
         Angular roll = ardrone.getRoll() * 1.0_rad,
                 pitch = ardrone.getPitch() * 1.0_rad,
                 yaw = ardrone.getYaw() * 1.0_rad;
         Length z = ardrone.getAltitude() * 1.0_m;
         double _vx, _vy, _vz;
-        //ardrone.getVelocity(&_vx, &_vy, &_vz);
+        ardrone.getVelocity(&_vx, &_vy, &_vz);
         Vel vx = _vx * 1.0_m / 1.0_s,
             vy = _vx * 1.0_m / 1.0_s,
             vz = _vx * 1.0_m / 1.0_s;
-        //ardrone >> image;
-        */
-
-        static double t = 0.0;
-        Angular roll = 3.14 / 8.0 * std::sin(2.0 * 3.14 * t / 1.0) * 1.0_rad, pitch = 0.0_rad, yaw = 0.0_rad;
-        Length z = (2.0 + 1.0 * std::sin(2.0 * 3.14 * t / 2.0)) * 1.0_m;
-
-        t += 0.01;
-
-        Vel vx = 1.0_m / 1.0_s,
-            vy = 1.0_m / 1.0_s,
-            vz = 1.0_m / 1.0_s;
+        ardrone >> image;
 
         // Send Sensor Data to main
         server.write<Drone::ReceiveData>(Drone::ReceiveData{roll, pitch, yaw, z, vx, vy, vz});
     }
 
-    //ardrone.close();
+    ardrone.close();
 
     return 0;
 }
