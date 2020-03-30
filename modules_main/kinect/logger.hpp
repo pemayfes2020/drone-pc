@@ -19,7 +19,6 @@ public:
         if (filename) {
             logfile_.open(filename);
         }
-        level_ = Debug;
     }
 
     bool good()
@@ -27,7 +26,7 @@ public:
         return logfile_.is_open() && logfile_.good();
     }
 
-    virtual void log(libfreenect2::Logger::Level level, const std::string& message) override
+    virtual void log(Logger::Level level, const std::string& message) override
     {
         logfile_ << "[" << libfreenect2::Logger::level2str(level) << "] " << message << std::endl;
     }

@@ -4,3 +4,6 @@
 [submodule "external/cmdline"]
 	path = external/cmdline
 	url = https://github.com/tanakh/cmdline.git
+[submodule "external/libfreenect2"]
+	path = external/libfreenect2
+	url = https://github.com/OpenKinect/libfreenect2.git

@@ -3,6 +3,8 @@
 
 #include "safe_exit.hpp"
 
+#include <libfreenect2/logger.h>
+
 #include <atomic>
 #include <cstdlib>
 #include <iostream>
@@ -34,7 +36,7 @@ public:
         // Logging
         libfreenect2::setGlobalLogger(libfreenect2::createConsoleLogger(libfreenect2::Logger::Debug));
 
-        FileLogger* filelogger = new FileLogger(getenv("LOGFILE"));
+        libfreenect2::Logger* filelogger = new libfreenect2::Logger;
         if (filelogger->good()) {
             libfreenect2::setGlobalLogger(filelogger);
         } else {
