@@ -1,5 +1,6 @@
 #pragma once
 
+#include "color.hpp"
 #include "shape.hpp"
 
 #include <Eigen/Core>
@@ -29,6 +30,6 @@ Object& addPlane(const Eigen::Vector3f& position, const Eigen::Vector3f& rotatio
 Object& addRectangular(const Eigen::Vector3f& position, const Eigen::Vector3f& rotation, const Eigen::Vector3f& size, Color color);
 Object& addCylinder(const Eigen::Vector3f& position, const Eigen::Vector3f& rotation, float radius, float height, Color color);
 Object& addTeapot(const Eigen::Vector3f& position, const Eigen::Vector3f& rotation, int size, Color color);
-Object& addSTLModel(const Eigen::Vector3f& position, const Eigen::Vector3f& rotation, const std::string filepath, Color color);
+Object& addSTLModel(const Eigen::Vector3f& position, const Eigen::Vector3f& rotation, const std::string filepath, bool colored, Color color);
 
 }  // namespace Graphic

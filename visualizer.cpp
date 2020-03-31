@@ -58,7 +58,7 @@ int main(int argc, char** argv)
     pos << 0.0f, 0.0f, 0.0f;
     rot << 0.0f, 0.0f, 0.0f;
 
-    drone = Graphic::addSTLModel(pos, rot, parser.get<std::string>("model"), Color{1.0, 1.0, 0.0});
+    drone = Graphic::addSTLModel(pos, rot, parser.get<std::string>("model"), true, Color{1.0, 1.0, 0.0});
 
     Graphic::start(callback);
 

@@ -68,5 +68,12 @@ struct STLModel : public ShapeBase {
     virtual void draw() const override;
 };
 
+struct ColoredSTLModel : public ShapeBase {
+    STL::ColorBinary data;
+
+    ColoredSTLModel(const Eigen::Vector3f& position, const Eigen::Vector3f& rotation, const std::string filepath) : ShapeBase(position, rotation), data(filepath) {}
+    virtual void draw() const override;
+};
+
 
 }  // namespace Shape

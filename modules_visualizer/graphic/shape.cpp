@@ -174,6 +174,23 @@ void STLModel::draw() const
     glEnd();
 }
 
+void ColoredSTLModel::draw() const
+{
+    glBegin(GL_TRIANGLES);
+    for (auto polygon : data.polygons) {
+        if (polygon.unique) {
+            glColor3f(polygon.color(0), polygon.color(1), polygon.color(2));
+        } else {
+            glColor3f(data.overall(0), data.overall(1), data.overall(2));
+        }
+        normal3f(polygon.normal);
+        vertex3f(polygon.r1);
+        vertex3f(polygon.r2);
+        vertex3f(polygon.r3);
+    }
+    glEnd();
+}
+
 }  // namespace Shape
 
 #pragma pop

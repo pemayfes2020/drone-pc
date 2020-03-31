@@ -58,9 +58,11 @@ int main(int argc, char** argv)
     pos << 0.0f, 0.0f, 0.0f;
     rot << 0.0f, 0.0f, PI / 2.;
 
-    drone::body = Graphic::addSTLModel(pos, rot, "../resource/ardrone.stl", Color{1.0, 1.0, 0.0});
+    drone::body = Graphic::addSTLModel(pos, rot, "../resource/ardrone.stl", true, Color{1.0, 1.0, 0.0});
     drone::ball = Graphic::addSphere(Eigen::Vector3f{pos(0), pos(1), pos(2) + drone::ball_offset}, rot, 40, Color{0.0, 0.2, 0.8});
 
+
+    Graphic::addSTLModel(Eigen::Vector3f{0.0, 0.0, 0.0}, Eigen::Vector3f{0.5 * PI, 0.0, 0.0}, "../resource/human.stl", true, Color{0.0, 0.0, 0.0});
 
     project_room::interior Wall[4];
 

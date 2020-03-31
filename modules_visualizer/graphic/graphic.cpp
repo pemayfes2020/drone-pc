@@ -321,10 +321,15 @@ Object& addTeapot(const Vector3f& position, const Vector3f& rotation, int size, 
     return objects.back();
 }
 
-Object& addSTLModel(const Vector3f& position, const Vector3f& rotation, const std::string filepath, Color color)
+Object& addSTLModel(const Vector3f& position, const Vector3f& rotation, const std::string filepath, bool colored, Color color)
 {
-    objects.push_back(
-        Object{color, std::make_shared<Shape::STLModel>(position, rotation, filepath)});
+    if (colored) {
+        objects.push_back(
+            Object{color, std::make_shared<Shape::ColoredSTLModel>(position, rotation, filepath)});
+    } else {
+        objects.push_back(
+            Object{color, std::make_shared<Shape::STLModel>(position, rotation, filepath)});
+    }
     return objects.back();
 }
 
