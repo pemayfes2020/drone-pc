@@ -10,7 +10,7 @@
 namespace StarReckoning
 {
 
-inline Eigen::Vector2i detectCircle(cv::Mat image, bool show_image = true)
+inline Eigen::Vector2i detectCircle(cv::Mat image, int ball_color, bool show_image = true)
 {
     using namespace Params::CircleDetection;
 
@@ -33,6 +33,10 @@ inline Eigen::Vector2i detectCircle(cv::Mat image, bool show_image = true)
     // 2値化 {
 
     // lowerlimit < hue < upperlimit
+    int HUE_LOWER_LIMIT = HUE_LOW[ball_color];
+    int HUE_UPPER_LIMIT = HUE_UPP[ball_color];
+
+
     cv::Mat hue_highpass, hue_lowpass, hue_bandpass;
     cv::threshold(hsv_channels[0], hue_highpass, HUE_LOWER_LIMIT, 255, CV_THRESH_BINARY);
     cv::threshold(hsv_channels[0], hue_lowpass, HUE_UPPER_LIMIT, 255, CV_THRESH_BINARY_INV);
@@ -91,7 +95,7 @@ inline Eigen::Vector2i detectCircle(cv::Mat image, bool show_image = true)
 
     if (circularity_max > CIRCULARITY_THRESHOLD) {
         if (show_image) {
-            cv::circle(image, summaries[circularity_max_id].center, (int)summaries[circularity_max_id].radius, cv::Scalar(0, 0, 255), 2, 8, 0);
+            cv::circle(image, summaries[circularity_max_id].center, (int)summaries[circularity_max_id].radius, cv::Scalar((ball_color == blue ? 255 : 0), (ball_color == yellow ? 255 : 0), (ball_color == red ? 255 : 0)), 2, 8, 0);
             cv::imshow("kinect_image", image);
         }
         return Eigen::Vector2i{summaries[circularity_max_id].center.x, summaries[circularity_max_id].center.y};

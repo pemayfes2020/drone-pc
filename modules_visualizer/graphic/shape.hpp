@@ -37,9 +37,10 @@ struct Sphere : public ShapeBase {
 };
 
 struct Plane : public ShapeBase {
-    float size;
+    float height;
+    float width;
 
-    Plane(const Eigen::Vector3f& position, const Eigen::Vector3f& rotation, float size) : ShapeBase(position, rotation), size(size) {}
+    Plane(const Eigen::Vector3f& position, const Eigen::Vector3f& rotation, float height, float width) : ShapeBase(position, rotation), height(height), width(width) {}
     virtual void draw() const override;
 };
 

@@ -1,5 +1,6 @@
 #include "control/impl/circle_detection.hpp"
 #include "control/localization.hpp"
+#include "params/control_params.hpp"
 
 #include <Eigen/Core>
 
@@ -24,8 +25,6 @@ constexpr double height_ratio = (double)height_depth / height;
 constexpr double horizontal = 84.1 * M_PI / 180.0;
 constexpr double vertical = 53.8 * M_PI / 180.0;
 
-
-Eigen::Matrix<double, 3, 1> kinect_r = {0, 0, 0};
 
 //参考
 //https://www.jstage.jst.go.jp/article/isciesci/58/8/58_KJ00009469648/_pdf/-char/ja
@@ -67,7 +66,7 @@ std::array<Length, 2> get2Dpos(cv::Mat image_rgb, cv::Mat image_depth, Length z,
     // TODO RGB画像とDepth画像、既知のzからxy平面内の座標を推定する
 
     //impl/circle.cpp内のdetectCircleから検出した円のkinect画面内座標を受け取る。
-    Eigen::Vector2i circle_pos = StarReckoning::detectCircle(image_rgb, 1);
+    Eigen::Vector2i circle_pos = StarReckoning::detectCircle(image_rgb, Params::CircleDetection::blue, 1);
 
     //中心
     int center_x = (width - 1) / 2;
@@ -76,7 +75,7 @@ std::array<Length, 2> get2Dpos(cv::Mat image_rgb, cv::Mat image_depth, Length z,
     double theta = vertical * (circle_pos(1) - center_y) / height;
     double phi = horizontal * (circle_pos(0) - center_x) / width;
 
-    double _depth = bilinear(image_depth, circle_pos(0), circle_pos(1));  //中心8近傍の平均?
+    double _depth = bilinear(image_depth, circle_pos(0), circle_pos(1));
 
     Eigen::Vector3d angle{
         1.0,
@@ -91,11 +90,12 @@ std::array<Length, 2> get2Dpos(cv::Mat image_rgb, cv::Mat image_depth, Length z,
         depth.rel = 0;
     }
 
-    Eigen::Vector3d vec_to_drone = depth.val * angle + kinect_r;
+    Eigen::Vector3d vec_to_drone = depth.val * angle + Params::kinect_pos;
 
     std::cout << "depth: " << depth.val << std::endl;
     std::cout << "Drone Pos(x, y, z): " << std::endl
               << vec_to_drone << std::endl;
+
 
     return std::array<Length, 2>{0.0_mm, 0.0_mm};
 }
