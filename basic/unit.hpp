@@ -16,6 +16,9 @@ using AngularVel = boost::units::quantity<boost::units::si::angular_velocity, do
 using AngularAcc = boost::units::quantity<boost::units::si::angular_acceleration, double>;
 using Time = boost::units::quantity<boost::units::si::time, double>;
 
+template <class D, class value_type = double>
+using unit_type = boost::units::quantity<D, value_type>;
+
 namespace SI
 {
 

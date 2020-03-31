@@ -23,7 +23,7 @@ public:
     void setIrAndDepthFrameListener(FrameListener* listener) {}
     bool start() { return true; }
     void stop() {}
-    void close() { return true; }
+    void close() {}
 };
 
 class Freenect2
