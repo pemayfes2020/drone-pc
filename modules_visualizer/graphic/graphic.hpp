@@ -25,7 +25,7 @@ void setWindowSize(int height, int width);
 void setBGColor(Color color);
 
 Object& addSphere(const Eigen::Vector3f& position, const Eigen::Vector3f& rotation, float radius, Color color);
-Object& addPlane(const Eigen::Vector3f& position, const Eigen::Vector3f& rotation, float size, Color color);
+Object& addPlane(const Eigen::Vector3f& position, const Eigen::Vector3f& rotation, float height, float width, Color color);
 Object& addRectangular(const Eigen::Vector3f& position, const Eigen::Vector3f& rotation, const Eigen::Vector3f& size, Color color);
 Object& addCylinder(const Eigen::Vector3f& position, const Eigen::Vector3f& rotation, float radius, float height, Color color);
 Object& addTeapot(const Eigen::Vector3f& position, const Eigen::Vector3f& rotation, int size, Color color);

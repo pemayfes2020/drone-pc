@@ -1,5 +1,6 @@
 #define GL_SILENCE_DEPRECATION
 
+
 #include "graphic/graphic.hpp"
 
 #include <GL/glut.h>
@@ -22,7 +23,7 @@ static void (*user_callback)(std::vector<Object>&);
 static int window_height = 600;
 static int window_width = 600;
 
-static float cam_dist = 1000.0;
+static float cam_dist = 4000.0;
 static float cam_theta = PI / 4.0;
 static float cam_phi = PI / 5.0;
 
@@ -290,10 +291,10 @@ Object& addSphere(const Vector3f& position, const Vector3f& rotation, float radi
     return objects.back();
 }
 
-Object& addPlane(const Eigen::Vector3f& position, const Eigen::Vector3f& rotation, float size, Color color)
+Object& addPlane(const Eigen::Vector3f& position, const Eigen::Vector3f& rotation, float height, float width, Color color)
 {
     objects.push_back(
-        Object{color, std::make_shared<Shape::Plane>(position, rotation, size)});
+        Object{color, std::make_shared<Shape::Plane>(position, rotation, height, width)});
     return objects.back();
 }
 

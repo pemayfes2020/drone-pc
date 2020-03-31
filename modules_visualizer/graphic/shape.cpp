@@ -64,14 +64,16 @@ void Sphere::draw() const
 
 void Plane::draw() const
 {
-    float offset = size / 2.0;
+    float hei = height / 2.0;
+    float wid = width / 2.0;
     glBegin(GL_QUADS);
 
+
     glNormal3f(0.0, 0.0, 1.0);
-    glVertex3f(-offset, -offset, 0);
-    glVertex3f(offset, -offset, 0);
-    glVertex3f(offset, offset, 0);
-    glVertex3f(-offset, offset, 0);
+    glVertex3f(-hei, -wid, 0);
+    glVertex3f(hei, -wid, 0);
+    glVertex3f(hei, wid, 0);
+    glVertex3f(-hei, wid, 0);
 
     glEnd();
 }
