@@ -2,9 +2,12 @@ cmake_minimum_required(VERSION 3.0)
 
 # add library for simulator core
 file(GLOB SIM_CORE_SOURCES simulator/core/src/*.cpp)
-add_library(simulator_core STATIC ${SIM_CORE_SOURCES})
-target_include_directories(simulator_core PRIVATE simulator/core/include basic)
-target_link_libraries(simulator_core
+add_executable(core ${SIM_CORE_SOURCES})
+target_include_directories(core PRIVATE 
+    simulator/core/include
+    ${EIGEN3_INCLUDE_DIRS}
+    basic)
+target_link_libraries(core
     ${OPENGL_LIBRARIES}
     ${GLUT_LIBRARY}
     ${OpenCV_LIBRARIES}
@@ -19,8 +22,7 @@ target_include_directories(libfreenect2_sim PRIVATE
     simulator/core/include)
 
 target_link_libraries(libfreenect2_sim
-    ${OpenCV_LIBRARIES}
-    simulator_core)
+    ${OpenCV_LIBRARIES})
 
 # add library for cvdrones_sim
 file(GLOB CVDRONES_SIM_SOURCES simulator/cvdrones_sim/src/*.cpp)
@@ -31,8 +33,7 @@ target_include_directories(cvdrones_sim PRIVATE
     simulator/cvdrones_sim/include
     simulator/core/include)
 target_link_libraries(cvdrones_sim
-    ${OpenCV_LIBRARIES}
-    simulator_core)
+    ${OpenCV_LIBRARIES})
 
 
 # simulator main dependencies

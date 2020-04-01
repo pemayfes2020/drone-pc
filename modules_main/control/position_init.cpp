@@ -17,6 +17,7 @@ Eigen::Vector3d InitDronePosition(cv::Mat rgb, cv::Mat depth)
     //  Eigen::Vector2i circle_pos = 0;
 
     //
+    return Eigen::Vector3d{0.0, 0.0, 0.0};
 }
 
 }  // namespace PositionInit
