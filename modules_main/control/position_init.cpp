@@ -1,5 +1,3 @@
-#pragma once
-
 #include "params/control_params.hpp"
 #include "unit.hpp"
 

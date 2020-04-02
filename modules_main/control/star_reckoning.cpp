@@ -2,6 +2,7 @@
 #include "control/localization.hpp"
 
 #include "params/control_params.hpp"
+#include "params/environment_params.hpp"
 #include "params/kinect_params.hpp"
 
 #include <Eigen/Core>
@@ -74,7 +75,8 @@ std::array<Length, 2> get2Dpos(cv::Mat image_rgb, cv::Mat image_depth, Length z,
         depth.rel = 0;
     }
 
-    Eigen::Vector3d vec_to_drone = depth.val * angle + Params::kinect_pos;
+    Eigen::Vector3d vec_to_drone
+        = depth.val * angle + Params::Environment::kinect_pos;
 
     std::cout << "depth: " << depth.val << std::endl;
     std::cout << "Drone Pos(x, y, z): " << std::endl
