@@ -19,6 +19,7 @@ public:
     static Drone& construct(const std::string& filepath = "")
     {
         static Drone inst{filepath};
+        return inst;
     }
 
     static void update(Eigen::Vector3d pos, Eigen::Vector3d rot)
@@ -27,18 +28,19 @@ public:
     }
 
 private:
-    Graphic::Object body;
-    Graphic::Object ball;
+    Graphic::Object& ball;
+    Graphic::Object& body;
 
-    Drone(std::string filepath) : body{}, ball{}
+    Drone(std::string filepath)
+        : ball{Graphic::addSphere(
+              Eigen::Vector3d::Zero(), Eigen::Vector3d::Zero(),
+              Params::Environment::ball_radius / 1.0_mm,
+              Color{0.0, 0.2, 0.8})},
+          body{Graphic::addSTLModel(
+              Params::Environment::initial_pos,
+              Params::Environment::initial_rot,
+              filepath, true, ColorPreset::empty)}
     {
-        using namespace Eigen;
-        using namespace Params;
-
-        Vector3d zero = Vector3d::Zero();
-
-        body = Graphic::addSTLModel(Environment::initial_pos, Environment::initial_rot, filepath, true, ColorPreset::empty);
-        ball = Graphic::addSphere(zero, zero, Environment::ball_radius / 1.0_mm, Color{0.0, 0.2, 0.8});
     }
 
     void _update(Eigen::Vector3d pos, Eigen::Vector3d rot)
@@ -48,7 +50,7 @@ private:
 
         // TODO 要修正
         ball.pos = pos;
-        body.rot = rot;
+        ball.rot = rot;
     }
 };
 

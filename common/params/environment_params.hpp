@@ -9,7 +9,7 @@
 namespace Params::Environment
 {
 
-inline const Eigen::Vector3d initial_pos{0.0, 0.0, 0.0};
+inline const Eigen::Vector3d initial_pos{0.0, 0.0, 500.0};
 inline const Eigen::Vector3d initial_rot{0.0, 0.0, 0.5 * M_PI};
 
 inline const Eigen::Vector3d kinect_pos{0.0, 0.0, 0.0};
