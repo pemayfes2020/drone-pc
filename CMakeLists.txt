@@ -28,6 +28,11 @@ add_library(basic STATIC ${BASIC_SOURCES})
 set_target_properties(basic PROPERTIES LINKER_LANGUAGE CXX)
 target_link_libraries(basic ${BOOST_LIBRARIES})
 
+# build graphic as subdirectory (name: graphic)
+add_subdirectory(external/drone-gl)
+set(graphic_INCLUDE_DIRS
+    external/drone-gl/include)
+
 # common include directories
 include_directories(
     ${OpenCV_INCLUDE_DIRS}

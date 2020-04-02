@@ -7,3 +7,6 @@
 [submodule "external/libfreenect2"]
 	path = external/libfreenect2
 	url = https://github.com/OpenKinect/libfreenect2.git
+[submodule "external/drone-gl"]
+	path = external/drone-gl
+	url = https://github.com/pemayfes2020/drone-gl.git

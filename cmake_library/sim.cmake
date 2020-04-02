@@ -6,6 +6,7 @@ add_executable(core ${SIM_CORE_SOURCES})
 target_include_directories(core PRIVATE 
     simulator/core/include
     ${EIGEN3_INCLUDE_DIRS}
+    ${graphic_INCLUDE_DIRS}
     basic)
 target_link_libraries(core
     ${OPENGL_LIBRARIES}
@@ -13,6 +14,7 @@ target_link_libraries(core
     ${OpenCV_LIBRARIES}
     ${BOOST_LIBRARIES}
     rt
+    graphic
     basic)
 
 # add library for libfreenect2_sim
@@ -66,11 +68,13 @@ set(AR_LINK_LIBRARIES
 set(VISUALIZER_INCLUDE_DIRS
     ${OPENGL_INCLUDE_DIR}
     ${GLUT_INCLUDE_DIR}
-    ${EIGEN3_INCLUDE_DIRS})
+    ${EIGEN3_INCLUDE_DIRS}
+    ${graphic_INCLUDE_DIRS})
 
 set(VISUALIZER_LINK_LIBRARIES
     ${OPENGL_LIBRARIES}
     ${GLUT_LIBRARY}
     ${BOOST_LIBRARIES}
     pthread
+    graphic
     basic)
