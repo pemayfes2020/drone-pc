@@ -1,38 +1,22 @@
 #include "control/impl/circle_detection.hpp"
 #include "control/localization.hpp"
+
 #include "params/control_params.hpp"
+#include "params/kinect_params.hpp"
 
 #include <Eigen/Core>
 
 #include <iostream>
 
-//rgb画像の大きさ
-constexpr int width = 1920;
-constexpr int height = 1080;
+using namespace Params::Kinect;
 
-//depth画像の大きさ
-constexpr int width_depth = 512;
-constexpr int height_depth = 424;
-
-constexpr double width_ratio = (double)width_depth / width;
-constexpr double height_ratio = (double)height_depth / height;
-
-//    視野角について
-//    http://neareal.com/629/
-//    (水平)84.1 度 (垂直) 53.8 度
-//    らしい
-//
-constexpr double horizontal = 84.1 * M_PI / 180.0;
-constexpr double vertical = 53.8 * M_PI / 180.0;
-
+constexpr double width_ratio = (double)Depth::width / RGB::width;
+constexpr double height_ratio = (double)Depth::height / RGB::height;
 
 //参考
 //https://www.jstage.jst.go.jp/article/isciesci/58/8/58_KJ00009469648/_pdf/-char/ja
 
-namespace Control
-{
-
-namespace Localization
+namespace Control::Localization
 {
 
 double bilinear(cv::Mat depth, int x_rgb, int y_rgb)
@@ -69,11 +53,11 @@ std::array<Length, 2> get2Dpos(cv::Mat image_rgb, cv::Mat image_depth, Length z,
     Eigen::Vector2i circle_pos = StarReckoning::detectCircle(image_rgb, Params::CircleDetection::blue, 1);
 
     //中心
-    int center_x = (width - 1) / 2;
-    int center_y = (height - 1) / 2;
+    int center_x = (RGB::width - 1) / 2;
+    int center_y = (RGB::height - 1) / 2;
 
-    double theta = vertical * (circle_pos(1) - center_y) / height;
-    double phi = horizontal * (circle_pos(0) - center_x) / width;
+    double theta = ViewAngle::vertical * (circle_pos(1) - center_y) / RGB::height;
+    double phi = ViewAngle::horizontal * (circle_pos(0) - center_x) / RGB::width;
 
     double _depth = bilinear(image_depth, circle_pos(0), circle_pos(1));
 
@@ -100,6 +84,4 @@ std::array<Length, 2> get2Dpos(cv::Mat image_rgb, cv::Mat image_depth, Length z,
     return std::array<Length, 2>{0.0_mm, 0.0_mm};
 }
 
-}  // namespace Localization
-
-}  // namespace Control
+}  // namespace Control::Localization

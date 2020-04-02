@@ -11,6 +11,8 @@ target_link_libraries(core
     ${OPENGL_LIBRARIES}
     ${GLUT_LIBRARY}
     ${OpenCV_LIBRARIES}
+    ${BOOST_LIBRARIES}
+    rt
     basic)
 
 # add library for libfreenect2_sim
