@@ -25,9 +25,10 @@ void callback(std::vector<Graphic::Object>& objs)
     pos(0) = amp * std::sin(2.0 * M_PI * freq * t) / 1.0_mm;
     Common::Visual::Drone::update(pos, rot);
 
-    objs.at(objs.size() - 2).pos = pos;
+    std::cout << "obj(-1): " << std::hex << objs.at(objs.size() - 1).shape.get() << std::endl;
+    std::cout << "obj(-2): " << std::hex << objs.at(objs.size() - 2).shape.get() << std::endl;
 
-    std::cout << t << ' ' << pos(0) * 1.0_mm << std::endl;
+    // std::cout << t << ' ' << pos(0) * 1.0_mm << std::endl;
     t += 0.03_s;
 }
 
