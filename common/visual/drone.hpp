@@ -5,9 +5,11 @@
 #include "graphic/graphic.hpp"
 
 #include <Eigen/Core>
+#include <Eigen/Geometry>
 
 #include <cmath>
 #include <iostream>
+#include <memory>
 #include <string>
 
 namespace Common::Visual
@@ -28,8 +30,8 @@ public:
     }
 
 private:
-    Graphic::Object& ball;
-    Graphic::Object& body;
+    Graphic::ObjectId ball;
+    Graphic::ObjectId body;
 
     Drone(std::string filepath)
         : ball{Graphic::addSphere(
@@ -45,12 +47,20 @@ private:
 
     void _update(Eigen::Vector3d pos, Eigen::Vector3d rot)
     {
-        body.pos = pos;
-        body.rot = rot;
+        using namespace Eigen;
 
-        // TODO 要修正
-        ball.pos = pos;
-        ball.rot = rot;
+        Graphic::setPosition(body, pos);
+        Graphic::setRotation(body, rot);
+
+        static const Vector3d offset{
+            0.0, 0.0, Params::Environment::ball_offset / 1.0_mm};
+        Matrix3d attitude
+            = (AngleAxisd(rot(0), Vector3d::UnitX())
+                * AngleAxisd(rot(1), Vector3d::UnitY())
+                * AngleAxisd(rot(2), Vector3d::UnitZ()))
+                  .toRotationMatrix();
+        Graphic::setPosition(ball, pos + attitude * offset);
+        Graphic::setRotation(ball, Vector3d::Zero());
     }
 };
 
