@@ -37,14 +37,14 @@ private:
 
         //壁
         Graphic::addPlane(
-            Vector3d{0.0, -0.5 * Environment::wall_width / 1.0_mm, 0.5 * Environment::wall_width / 1.0_mm},
-            Vector3d{0.5 * M_PI, 0.0, 0.0},
+            Vector3d{0.0, -0.5 * Environment::wall_width / 1.0_mm, 0.5 * Environment::wall_height / 1.0_mm},
+            Vector3d{-0.5 * M_PI, 0.0, 0.0},
             Environment::wall_width / 1.0_mm,
             Environment::wall_height / 1.0_mm,
             ColorPreset::light_gray);
 
         Graphic::addPlane(
-            Vector3d{-0.5 * Environment::wall_width / 1.0_mm, 0.0, 0.0},
+            Vector3d{-0.5 * Environment::wall_width / 1.0_mm, 0.0, 0.5 * Environment::wall_height / 1.0_mm},
             Vector3d{0.0, 0.5 * M_PI, 0.0},
             Environment::wall_height / 1.0_mm,
             Environment::wall_width / 1.0_mm,

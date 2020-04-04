@@ -4,16 +4,14 @@
 
 #include <cmath>
 
-Eigen::Vector3d pos;
-Eigen::Vector3d rot;
+Eigen::Vector3d pos{0.0, 0.0, 0.0};
+Eigen::Vector3d rot{0.0, 0.0, 0.0};
 
-Graphic::Object drone;
-Graphic::Object sphere;
+Graphic::ObjectId drone;
+Graphic::ObjectId sphere;
 
-void callback(std::vector<Graphic::Object>& objs)
+void callback()
 {
-    drone.pos = pos;
-    drone.rot = rot;
 }
 
 int main(int argc, char** argv)
@@ -22,9 +20,6 @@ int main(int argc, char** argv)
 
     Graphic::setWindowSize(800, 800);
     Graphic::setBGColor(Color{0.2, 0.2, 0.2});
-
-    pos << 0.0, 0.0, 0.0;
-    rot << 0.0, 0.0, 0.0;
 
     drone = Graphic::addSTLModel(pos, rot, "../resource/ardrone.stl", true, Color{1.0, 1.0, 0.0});
     Graphic::addSTLModel(pos, rot, "../resource/human.stl", true, Color{1.0, 1.0, 0.0});

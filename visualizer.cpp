@@ -1,6 +1,8 @@
 #include "graphic/graphic.hpp"
 #include "message_types_viz.hpp"
 #include "socket.hpp"
+#include "visual/drone.hpp"
+#include "visual/project_room.hpp"
 
 #include <Eigen/Core>
 #include <cmdline.h>
@@ -11,16 +13,12 @@
 #include <string>
 #include <thread>
 
-Eigen::Vector3d pos;
-Eigen::Vector3d rot;
+Eigen::Vector3d pos{0.0, 0.0, 0.0};
+Eigen::Vector3d rot{0.0, 0.0, 0.0};
 
-Graphic::Object drone;
-Graphic::Object sphere;
-
-void callback(std::vector<Graphic::Object>& objs)
+void callback()
 {
-    drone.pos = pos;
-    drone.rot = rot;
+    Common::Visual::Drone::update(pos, rot);
 }
 
 std::atomic_bool exit_flag = false;
@@ -49,16 +47,13 @@ int main(int argc, char** argv)
         },
         std::ref(server)};
 
-
     Graphic::init(argc, argv);
 
     Graphic::setWindowSize(800, 800);
     Graphic::setBGColor(Color{0.2, 0.2, 0.2});
 
-    pos << 0.0, 0.0, 0.0;
-    rot << 0.0, 0.0, 0.0;
-
-    drone = Graphic::addSTLModel(pos, rot, parser.get<std::string>("model"), true, Color{1.0, 1.0, 0.0});
+    Common::Visual::ProjectRoom::construct();
+    Common::Visual::Drone::construct(parser.get<std::string>("model"));
 
     Graphic::start(callback);
 
