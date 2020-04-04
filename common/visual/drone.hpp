@@ -62,7 +62,7 @@ private:
         Graphic::setPosition(ball, pos + attitude * offset);
         Graphic::setRotation(ball, Vector3d::Zero());
     }
-};
+};  // namespace Common::Visual
 
 
 }  // namespace Common::Visual
