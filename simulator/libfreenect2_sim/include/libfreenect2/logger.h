@@ -1,59 +1,32 @@
 #pragma once
 
+#include "logger.hpp"
+
 #include <iostream>
 #include <string>
 
 namespace libfreenect2
 {
 
-class Logger
+class Logger : public Basic::Logger::Logger
 {
 public:
-    enum Level {
-        Info,
-        Error,
-        Debug
-    };
-
-protected:
-    Level _level;
-
-public:
-    Logger()
-    {
-    }
-    Logger(Level level) : _level(level)
-    {
-    }
-
-    static std::string level2str(Level level)
-    {
-        switch (level) {
-        case Info:
-            return "Info";
-        case Error:
-            return "Error";
-        case Debug:
-            return "Debug";
-        default:
-            return "Undefined";
-        }
-    }
-
     bool good() { return true; }
-
     virtual void log(Logger::Level level, const std::string& message)
     {
-        _level = level;
-        std::cout << "[" << libfreenect2::Logger::level2str(level) << "] " << message << std::endl;
+        write(level, message);
     }
 
     virtual void log(const std::string& message)
     {
-        std::cout << "[" << libfreenect2::Logger::level2str(_level) << "] " << message << std::endl;
+        write(message);
+    }
+
+    Logger(std::ostream& out = std::cout)
+        : Basic::Logger::Logger(out)
+    {
     }
 };
-
 
 Logger* createConsoleLogger(Logger::Level level);
 void setGlobalLogger(Logger* logger);

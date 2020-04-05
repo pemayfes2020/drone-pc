@@ -41,15 +41,7 @@ public:
     }
 
     template <class T>
-    void write(add_const_rvalueref_t<T> value)
-    {
-        char bytes[sizeof(T)];
-        *(reinterpret_cast<std::add_pointer_t<T>>(bytes)) = value;
-        boost::asio::write(socket, boost::asio::buffer(bytes));
-    }
-
-    template <class T>
-    void write(add_const_lvalueref_t<T> value)
+    void write(T value)
     {
         char bytes[sizeof(T)];
         *(reinterpret_cast<std::add_pointer_t<T>>(bytes)) = value;

@@ -1,5 +1,4 @@
 #include "kinect/kinect.hpp"
-#include "kinect/logger.hpp"
 
 #include "safe_exit.hpp"
 
@@ -36,11 +35,11 @@ public:
         // Logging
         libfreenect2::setGlobalLogger(libfreenect2::createConsoleLogger(libfreenect2::Logger::Debug));
 
-        libfreenect2::Logger* filelogger = new libfreenect2::Logger;
-        if (filelogger->good()) {
-            libfreenect2::setGlobalLogger(filelogger);
+        auto logger = std::make_unique<libfreenect2::Logger>();
+        if (logger->good()) {
+            libfreenect2::setGlobalLogger(logger.get());
         } else {
-            delete filelogger;
+            logger.release();
         }
 
         // Discover Devices

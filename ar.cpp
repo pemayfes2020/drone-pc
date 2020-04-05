@@ -97,7 +97,7 @@ int main(int argc, char** argv)
         ardrone >> image;
 
         // Send Sensor Data to main
-        server.write<Drone::ReceiveData>(Drone::ReceiveData{roll, pitch, yaw, z, vx, vy, vz});
+        server.write(Drone::ReceiveData{roll, pitch, yaw, z, vx, vy, vz});
     }
 
     ardrone.close();
