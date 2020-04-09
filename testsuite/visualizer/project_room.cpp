@@ -31,6 +31,8 @@ void callback()
     rot(2) = vel_yaw * t / 1.0_rad;
     Common::Visual::Drone::update(pos, rot);
 
+    Graphic::setCameraTarget(pos);
+
     t += 0.03_s;
 }
 
